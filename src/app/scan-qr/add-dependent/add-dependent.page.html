@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar color="medium">
+    <ion-title>Add Dependent</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <p class="title">Enter your dependant's details <br> (All field are mandotory)</p>
+
+  <div>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col class="ion-text-end" size="5">
+          <ion-icon name="heart-circle-outline" style="zoom:2.0;" [ngClass]="{'active': favActive}"
+            (click)="addToFavourite()" (click)="favourites($event)"></ion-icon>
+        </ion-col>
+        <ion-col>
+          <p>Saved Favourite</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!--User Input & Button-->
+  <div class="input ion-text-left">
+    <ion-item>
+      <ion-label position="stacked">Name</ion-label>
+      <ion-input placeholder="username" required [(ngModel)]="dependentForm.name">
+      </ion-input>
+    </ion-item>
+    <ion-item class="ion-margin-top">
+      <ion-label position="stacked">IC Number</ion-label>
+      <ion-input placeholder="920502-13-0867" required [(ngModel)]="dependentForm.ic"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Age</ion-label>
+      <ion-input placeholder="29" required [(ngModel)]="dependentForm.age">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Gender</ion-label>
+
+        <ion-radio-group value="Gender" [(ngModel)]="dependentForm.gender">
+          <ion-row>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-label>Male</ion-label>
+                <ion-radio slot="start" value="Male"></ion-radio>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-label>Female</ion-label>
+                <ion-radio slot="start" value="Female"></ion-radio>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-radio-group>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Current Address</ion-label>
+      <ion-textarea required [(ngModel)]="dependentForm.address"></ion-textarea>
+    </ion-item>
+
+    <div class="checkbox">
+      <ion-item lines="none">
+      <ion-checkbox></ion-checkbox>
+      <ion-label class="checkboxTitle">Add to Favourite</ion-label>
+    </ion-item>
+    </div>
+
+    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="infoSubmitted()">Submit</ion-button>
+    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="add()">Add Dependent</ion-button>
+  </div>
+  <!--/User Input & Button-->
+
+</ion-content>

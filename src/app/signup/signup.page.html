@@ -1,0 +1,50 @@
+<ion-content>
+  <!--Logo & Title-->
+  <div class="square ion-text-center">
+    <img src="../../assets/Logo.png" alt="Logo" class="logo">
+    <ion-text color="light">
+      <p class="name">E-Waiting Line Management</p>
+    </ion-text>
+
+    <ion-grid class="ion-margin">
+      <ion-row class="ion-align-items-center">
+        <ion-col>
+          <div class="ion-text-start">
+            <ion-text color="light">
+              <h3 class="login" (click)="login()">Log In</h3>
+            </ion-text>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="ion-text-end">
+            <ion-text color="light">
+              <h3 class="signup">Sign Up</h3>
+            </ion-text>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <!--/Logo & Title-->
+
+  <!--User Input & Button-->
+  <div class="input ion-text-left">
+    <ion-item>
+      <ion-label position="stacked">Name</ion-label>
+      <ion-input placeholder="username" type="email" required [(ngModel)]="signupForm.name">
+      </ion-input>
+    </ion-item>
+    <ion-item class="ion-margin-top">
+      <ion-label position="stacked">IC Number</ion-label>
+      <ion-input placeholder="920502-13-0867" required [(ngModel)]="signupForm.ic"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Phone Number</ion-label>
+      <ion-input placeholder="012-34568791" required [(ngModel)]="signupForm.phone">
+      </ion-input>
+    </ion-item>
+    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="signup()">Get Started</ion-button>
+  </div>
+  <!--/User Input & Button-->
+
+</ion-content>

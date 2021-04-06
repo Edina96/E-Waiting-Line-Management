@@ -1,0 +1,35 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="medium">
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="2">
+          <ion-thumbnail>
+            <img src="../../assets/Logo.png">
+          </ion-thumbnail>
+        </ion-col>
+        <ion-col>
+          <ion-text color="light">
+            <h4>E-Waiting Line Management</h4>
+          </ion-text>
+        </ion-col>
+        <ion-col size="1">
+          <ion-icon name="ellipsis-vertical"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <img [src]="shopImageURL" alt="Shop Logo" class="logo">
+  <p class="title">Number of People In Shop</p>
+  <p class="number">20</p>
+  <p class="title">Number of People In Queue</p>
+  <p class="number">10</p>
+
+  <div class="btn ion-margin">
+    <ion-button color="medium" size="large" expand="block" (click)="showTicket()">Take E-Ticket</ion-button>
+    <ion-button color="medium" size="large" class="btnScan" expand="block" (click)="scanCode()">Scan QR Code</ion-button>
+  </div>
+  
+</ion-content>

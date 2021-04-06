@@ -1,0 +1,45 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="medium">
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col size="2">
+          <ion-thumbnail>
+            <img src="../../assets/Logo.png">
+          </ion-thumbnail>
+        </ion-col>
+        <ion-col>
+          <ion-text color="light">
+            <h4>E-Waiting Line Management</h4>
+          </ion-text>
+        </ion-col>
+        <ion-col size="1">
+          <ion-icon name="ellipsis-vertical" (click)="logout($event)"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center">
+  <p class="title">Change Shop</p>
+
+  <ion-card>
+    <img src="../../assets/h&mlogo.jpg" alt="H&M" [routerLink]="['']" routerLinkActive="router-link-active" [state]="{id: shopName, data: 'H&M'}">
+    <ion-card-header>
+      <ion-card-title>H&M</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+  <ion-card>
+    <img src="../../assets/sushikinglogo.png" alt="Sushi King" [routerLink]="['']" routerLinkActive="router-link-active" [state]="{id: shopName, data: 'Sushi King'}">
+    <ion-card-header>
+      <ion-card-title>Sushi King</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+  <ion-card>
+    <img src="../../assets/watsonslogo.png" alt="Watsons" [routerLink]="['']" routerLinkActive="router-link-active" [state]="{id: shopName, data: 'Watsons'}">
+    <ion-card-header>
+      <ion-card-title>Watsons</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+
+</ion-content>

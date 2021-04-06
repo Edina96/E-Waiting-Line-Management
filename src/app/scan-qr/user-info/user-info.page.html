@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="medium">
+    <ion-title>User Info</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!--User Input & Button-->
+  <div class="input ion-text-center">
+    <p style="font-weight: bold;">Hi, John Doe</p>
+    <img src="../../../assets/checkTemp.png" class="checkTemp">
+    <ion-item>
+      <ion-label position="stacked">Please enter your temperature (°C)</ion-label>
+      <ion-input inputmode="numeric" type="numeric" required [(ngModel)]="infoForm.temperature"></ion-input>
+    </ion-item>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-button color="medium" class="btn_add ion-margin-top" expand="block" (click)="addDependent()">Add Dependent</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button color="medium" class="ion-margin-top" expand="block" (click)="infoSubmitted()">Submit</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <!--/User Input & Button-->
+
+</ion-content>

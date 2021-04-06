@@ -1,0 +1,7 @@
+{
+  "name": "eWaiting",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

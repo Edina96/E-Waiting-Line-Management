@@ -1,0 +1,45 @@
+<ion-content>
+  <!--Logo & Title-->
+  <div class="square ion-text-center">
+    <img src="../../assets/Logo.png" alt="Logo" class="logo">
+    <ion-text color="light">
+      <p class="name">E-Waiting Line Management</p>
+    </ion-text>
+
+    <ion-grid class="ion-margin">
+      <ion-row class="ion-align-items-center">
+        <ion-col>
+          <div class="ion-text-start">
+            <ion-text color="light">
+              <h3 class="login">Log In</h3>
+            </ion-text>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="ion-text-end">
+            <ion-text color="light">
+              <h3 class="signup" (click)="signup()">Sign Up</h3>
+            </ion-text>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <!--/Logo & Title-->
+
+  <!--User Input & Button-->
+  <div class="input ion-text-left">
+    <ion-item>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input inputmode="email" placeholder="example@gmail.com" type="email" required [(ngModel)]="loginForm.email"></ion-input>
+    </ion-item>
+    <ion-item class="ion-margin-top">
+      <ion-label position="stacked">Password</ion-label>
+      <ion-input type="password" required [(ngModel)]="loginForm.password"></ion-input>
+    </ion-item>
+    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="login()">Continue</ion-button>
+    <p class="forgot-pwd ion-text-center">FORGOT PASSWORD?</p>
+  </div>
+  <!--/User Input & Button-->
+
+</ion-content>

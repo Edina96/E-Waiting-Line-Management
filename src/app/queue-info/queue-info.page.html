@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar color="medium">
+    <ion-title>ShopName</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="content">
+  <div class="info">
+    <p>Current E-Ticket Number:</p>
+    <p class="data">E029</p>
+    <p>Estimated Waiting Time (min):</p>
+    <p class="data">20:00</p>
+    <p>Number of People In Shop:</p>
+    <p class="data">20</p>
+    <p>Number of People In Queue:</p>
+    <p class="data">10</p>
+  </div>
+
+  <div class="btn ion-margin">
+    <ion-button color="medium" size="large" class="btnScan" expand="block" (click)="scanCode()">Scan QR Code</ion-button>
+    <ion-button color="medium" size="large" expand="block" (click)="throwTicket()">Throw E-Ticket</ion-button>
+  </div>
+</div>
+
+</ion-content>

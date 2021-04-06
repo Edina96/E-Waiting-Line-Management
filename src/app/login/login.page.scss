@@ -1,0 +1,32 @@
+.square {
+    height: 50%;
+    width: 100%;
+    background-color: #6b0707;
+
+    .logo {
+        margin-top: 15%;
+        width: 35%;
+        height: auto;
+    }
+    .name {
+        text-align: center;
+        font-size: xx-large;
+    }
+
+    .login {
+        font-size: xx-large;
+    }
+
+    .signup {
+        color: grey;
+    }
+
+}
+
+.input {
+    margin: 10%;
+}
+
+.forgot-pwd {
+    opacity: 0.6;
+}
