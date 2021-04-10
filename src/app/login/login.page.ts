@@ -22,7 +22,7 @@ export class LoginPage implements OnInit {
     const { username, password} = this;
     try{
       const res = this.auth.signInWithEmailAndPassword(username,password);
-      //this.router.navigate(['shopSelection']);
+      this.router.navigate(['shopSelection']);
       
 
     }catch(err){
