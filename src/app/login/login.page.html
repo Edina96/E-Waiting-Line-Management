@@ -31,11 +31,11 @@
   <div class="input ion-text-left">
     <ion-item>
       <ion-label position="stacked">Email</ion-label>
-      <ion-input inputmode="email" placeholder="example@gmail.com" type="email" required [(ngModel)]="loginForm.email"></ion-input>
+      <ion-input type="text" placeholder="example@gmail.com"[(ngModel)]="username"></ion-input>
     </ion-item>
     <ion-item class="ion-margin-top">
       <ion-label position="stacked">Password</ion-label>
-      <ion-input type="password" required [(ngModel)]="loginForm.password"></ion-input>
+      <ion-input type="password" [(ngModel)]="password"></ion-input>
     </ion-item>
     <ion-button color="medium" class="ion-margin-top" expand="block" (click)="login()">Continue</ion-button>
     <p class="forgot-pwd ion-text-center">FORGOT PASSWORD?</p>
