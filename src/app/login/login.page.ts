@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
-
-interface LoginModel {
-  email: string;
-  password: string;
-}
+import { AngularFireAuth } from '@angular/fire/auth';
+import {Router} from '@angular/router'
+import firebase from 'firebase/app';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-login',
@@ -12,18 +11,31 @@ interface LoginModel {
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+  username: string="";
+  password: string="";
+  logindeterminer: boolean = false;
 
-  public loginForm = {} as LoginModel;
-
-  constructor(public navCtrl: NavController) { }
-
+  constructor(public auth: AngularFireAuth,public navCtrl: NavController,public router:Router) {
+  }
   ngOnInit() {
   }
+  async login() {
+    const { username, password} = this;
+    try{
+      const res = this.auth.signInWithEmailAndPassword(username,password);
+      //this.router.navigate(['shopSelection']);
 
-  login() {
-    console.log(this.loginForm);
-    this.navCtrl.navigateForward('shopSelection');
+
+    }catch(err){
+      console.dir(err)
+      if(err.code === "auth/user-not-found"){
+        console.log("User not found")
+      }
+    }
   }
+  
+
+
 
   signup() {
     console.log("sign up");

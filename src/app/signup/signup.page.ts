@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { NavController } from '@ionic/angular';
 
 interface SignUpModel {
@@ -12,11 +13,14 @@ interface SignUpModel {
   templateUrl: './signup.page.html',
   styleUrls: ['./signup.page.scss'],
 })
+
 export class SignupPage implements OnInit {
 
   public signupForm = {} as SignUpModel;
 
   constructor(public navCtrl: NavController) { }
+
+ 
 
   ngOnInit() {
   }

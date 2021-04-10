@@ -1,4 +1,5 @@
 <ion-content>
+  
   <!--Logo & Title-->
   <div class="square ion-text-center">
     <img src="../../assets/Logo.png" alt="Logo" class="logo">
@@ -31,7 +32,7 @@
   <div class="input ion-text-left">
     <ion-item>
       <ion-label position="stacked">Name</ion-label>
-      <ion-input placeholder="username" type="email" required [(ngModel)]="signupForm.name">
+      <ion-input placeholder="username" type="email" required [(ngModel)]="email">
       </ion-input>
     </ion-item>
     <ion-item class="ion-margin-top">
@@ -46,5 +47,5 @@
     <ion-button color="medium" class="ion-margin-top" expand="block" (click)="signup()">Get Started</ion-button>
   </div>
   <!--/User Input & Button-->
-
+  
 </ion-content>
