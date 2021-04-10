@@ -3,7 +3,6 @@ import { NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/auth';
 import {Router} from '@angular/router'
 import firebase from 'firebase/app';
-import {AngularFirestore} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-login',
