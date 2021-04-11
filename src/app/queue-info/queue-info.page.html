@@ -1,26 +1,48 @@
 <ion-header>
   <ion-toolbar color="medium">
-    <ion-title>ShopName</ion-title>
+
+      <ion-grid>
+        <ion-row class="ion-align-items-center">
+          <ion-col>
+            <img src="../../assets/watsonslogo.png" alt="logo" class="logo">
+          </ion-col>
+          <ion-col>
+            <p>ShopName</p>
+          </ion-col>
+          <ion-col size="1">
+            <ion-icon name="ellipsis-vertical" class="ion-text-end" (click)=logout($event)></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <!-- Info-->
   <div class="content">
-  <div class="info">
-    <p>Current E-Ticket Number:</p>
-    <p class="data">E029</p>
-    <p>Estimated Waiting Time (min):</p>
-    <p class="data">20:00</p>
-    <p>Number of People In Shop:</p>
-    <p class="data">20</p>
-    <p>Number of People In Queue:</p>
-    <p class="data">10</p>
-  </div>
+    <div class="info">
+      <p class="title">Current E-Ticket Number:</p>
+      <p class="data">E021</p>
+      <p class="title">Your E-Ticket Number:</p>
+      <p class="data">E029</p>
+      <p class="title">Estimated Waiting Time (min):</p>
+      <p class="data">20:00</p>
+      <p class="title">Number of People In Shop:</p>
+      <p class="data">20</p>
+      <p class="title">Number of People In Queue:</p>
+      <p class="data">10</p>
+    </div>
+    <!-- /Info -->
 
-  <div class="btn ion-margin">
-    <ion-button color="medium" size="large" class="btnScan" expand="block" (click)="scanCode()">Scan QR Code</ion-button>
-    <ion-button color="medium" size="large" expand="block" (click)="throwTicket()">Throw E-Ticket</ion-button>
+    <!-- Button -->
+    <div class="btn ion-margin">
+      <ion-button color="medium" size="large" class="btnScan" expand="block" (click)="scanCode()">Scan QR Code
+      </ion-button>
+      <ion-button color="medium" size="large" expand="block" (click)="throwTicket()">Throw E-Ticket</ion-button>
+      <!-- [routerLink]="['']" routerLinkActive="router-link-active" [state]="{}" -->
+    </div>
   </div>
-</div>
+  <!-- /Button -->
 
 </ion-content>

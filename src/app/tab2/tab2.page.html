@@ -13,7 +13,7 @@
           </ion-text>
         </ion-col>
         <ion-col size="1">
-          <ion-icon name="ellipsis-vertical"></ion-icon>
+          <ion-icon name="ellipsis-vertical" (click)=logout($event)></ion-icon>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -21,23 +21,37 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list>
-    <ion-item>
-      <ion-grid>
-        <ion-row class="ion-align-items-center">
-          <ion-col size="3">
-            <ion-avatar item-start>
-              <img src="../../assets/logoDark.png">
-            </ion-avatar>
-          </ion-col>
-          <ion-col>
-            <p class="title">It's Your Turn!</p>
-            <p class="message">Please proceed to the counter.</p>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-item>
-  </ion-list>
+  <h3 class="ion-margin title">My Ticket</h3>
 
-  <!-- <app-explore-container name="Tab 2 page"></app-explore-container> -->
+  <ion-card class="ion-margin">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <img src="../../assets/h&mlogo.jpg" alt="shopLogo" class="shopImg">
+        </ion-col>
+        <ion-col>
+          <p class="ticket">E029</p>
+          <p class="info">20 mins left</p>
+          <p class="info">Current: E021</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  <ion-card class="ion-margin">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <img src="../../assets/sushikinglogo.png" alt="shopLogo" class="shopImg">
+        </ion-col>
+        <ion-col>
+          <p class="ticket">D111</p>
+          <p class="info">35 mins left</p>
+          <p class="info">Current: D096</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>  
+
+  <ion-button color="medium" class="ion-margin-top btn" size="large" expand="block" (click)="add()">Get Another</ion-button>
 </ion-content>

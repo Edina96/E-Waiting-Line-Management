@@ -28,7 +28,7 @@ export class QueueInfoPage implements OnInit {
           text: 'YES',
           handler: () => {
             console.log("Ticket Canceled");
-            //this.navCtrl.navigateForward('tab1');
+            //this.navCtrl.navigateForward('tab2');
           }
         }
       ]

@@ -13,7 +13,7 @@
           </ion-text>
         </ion-col>
         <ion-col size="1">
-          <ion-icon name="ellipsis-vertical"></ion-icon>
+          <ion-icon name="ellipsis-vertical" (click)=logout($event)></ion-icon>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -21,8 +21,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <h1 class="history ion-margin">History</h1>
-  <ion-list class="list">
+  <ion-list>
     <ion-item>
       <ion-grid>
         <ion-row class="ion-align-items-center">
@@ -40,5 +39,4 @@
     </ion-item>
   </ion-list>
 
-  <!-- <app-explore-container name="Tab 2 page"></app-explore-container> -->
 </ion-content>

@@ -11,13 +11,15 @@
 .number {
   text-align: center;
   font-weight: bold;
-  font-size: 40px;
+  font-size: 60px;
+  margin-top: 0;
+  margin-bottom: 7%;
 }
 
 .btn {
   margin: 5% 20% 0% 20%;
 
-  .btnScan {
+  .btnChange {
     margin-top: 20px;
   }
 }

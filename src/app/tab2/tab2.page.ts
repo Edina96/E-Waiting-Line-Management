@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { NavController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { LogoutComponent } from '../logout/logout.component';
 
 @Component({
   selector: 'app-tab2',
@@ -7,6 +10,20 @@ import { Component } from '@angular/core';
 })
 export class Tab2Page {
 
-  constructor() {}
+  constructor(public navCtrl: NavController, public popoverController: PopoverController) {}
+
+  add() {
+    this.navCtrl.navigateForward('shopSelection');
+  }
+
+  async logout(ev: any) {
+    const popover = await this.popoverController.create({
+      component: LogoutComponent,
+      event: ev,
+      animated: true,
+      showBackdrop: true
+    });
+    return await popover.present();
+  }
 
 }

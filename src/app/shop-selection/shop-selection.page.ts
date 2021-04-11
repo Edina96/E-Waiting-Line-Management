@@ -15,6 +15,6 @@ export class ShopSelectionPage implements OnInit {
 
   getShopName(shopName: string) {
     console.log(shopName);
-    this.router.navigateByUrl('/tabs/tab2/' + shopName);
+    this.router.navigateByUrl('/tabs/tab1/' + shopName);
   }
 }

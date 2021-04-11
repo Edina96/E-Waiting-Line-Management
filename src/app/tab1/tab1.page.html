@@ -13,7 +13,7 @@
           </ion-text>
         </ion-col>
         <ion-col size="1">
-          <ion-icon name="ellipsis-vertical"></ion-icon>
+          <ion-icon name="ellipsis-vertical" (click)=logout($event)></ion-icon>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -29,7 +29,7 @@
 
   <div class="btn ion-margin">
     <ion-button color="medium" size="large" expand="block" (click)="showTicket()">Take E-Ticket</ion-button>
-    <ion-button color="medium" size="large" class="btnScan" expand="block" (click)="scanCode()">Scan QR Code</ion-button>
+    <ion-button color="medium" size="large" class="btnChange" expand="block" (click)="changeShop()">Change Shop</ion-button>
   </div>
   
 </ion-content>
