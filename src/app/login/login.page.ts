@@ -17,20 +17,22 @@ export class LoginPage implements OnInit {
   constructor(public auth: AngularFireAuth,public navCtrl: NavController,public router:Router) {
   }
   ngOnInit() {
+
   }
+
+  //Login Function
   async login() {
     const { username, password} = this;
     try{
       const res = this.auth.signInWithEmailAndPassword(username,password);
       this.router.navigate(['shopSelection']);
-      
-
     }catch(err){
       console.dir(err)
-      if(err.code === "auth/user-not-found"){
-        console.log("User not found")
+      //If error displays user not found then
+      // if(err=="auth/user-not-found"){
+      //   console.log("User not found")
       
-      }
+      // }
     }
   }
   
