@@ -58,9 +58,9 @@ export class Tab1Page {
     await alert.present();
   }
 
-  nextpage() {
-    this.navCtrl.navigateForward('queue-info');
-  }
+  // nextpage() {
+  //   this.navCtrl.navigateForward('queue-info');
+  // }
 
   changeShop() {
     this.navCtrl.navigateBack('shopSelection');

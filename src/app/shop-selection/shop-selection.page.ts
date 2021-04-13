@@ -13,8 +13,4 @@ export class ShopSelectionPage implements OnInit {
   ngOnInit() {
   }
 
-  getShopName(shopName: string) {
-    console.log(shopName);
-    this.router.navigateByUrl('/tabs/tab1/' + shopName);
-  }
 }

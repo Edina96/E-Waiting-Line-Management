@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
 import { LogoutComponent } from '../logout/logout.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab2',
@@ -10,7 +11,7 @@ import { LogoutComponent } from '../logout/logout.component';
 })
 export class Tab2Page {
 
-  constructor(public navCtrl: NavController, public popoverController: PopoverController) {}
+  constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router) {}
 
   add() {
     this.navCtrl.navigateForward('shopSelection');

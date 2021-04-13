@@ -11,10 +11,33 @@ import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 })
 export class QueueInfoPage implements OnInit {
 
+  public ticketShopID: string;
+  public ticketShopImageURL: string;
+  public ticketShopName: string = '';
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner) { }
 
   ngOnInit() {
+    this.ticketShopID = this.router.getCurrentNavigation().extras.state.data;
+    console.log(this.ticketShopID);
+    this.updateShopImage();
+  }
+
+  updateShopImage() {
+    switch (this.ticketShopID) {
+      case 'H&M':
+        this.ticketShopImageURL = '../../assets/h&mlogo.jpg';
+        this.ticketShopName = 'H&M';
+        break;
+      case 'Sushi King':
+        this.ticketShopImageURL = '../../assets/sushikinglogo.png';
+        this.ticketShopName = 'Sushi King';
+        break;
+      case 'Watsons':
+        this.ticketShopImageURL = '../../assets/watsonslogo.png';
+        this.ticketShopName = 'Watsons';
+        break;
+    }
   }
 
   async throwTicket() {
