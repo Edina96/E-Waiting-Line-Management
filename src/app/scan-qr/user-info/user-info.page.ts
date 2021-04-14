@@ -20,6 +20,10 @@ export class UserInfoPage implements OnInit {
   ngOnInit() {
   }
 
+  savedDependent() {
+    this.navCtrl.navigateForward('saved-favourite');
+  }
+
   addDependent() {
     this.navCtrl.navigateForward('add-dependent');
   }
@@ -37,7 +41,7 @@ export class UserInfoPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Success',
       subHeader: 'You have successfully check-in.',
-      message: `Please take note that the app has recorded your geolocation details.`,
+      message: `Please take note that the app has recorded your geolocation details for the purpose of automating check-out.`,
       buttons: [
         {
           text: 'OK',

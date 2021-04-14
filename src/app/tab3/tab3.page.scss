@@ -1,9 +1,19 @@
 .title {
     font-weight: bolder;
-    font-size: larger;
+    font-size: large;
     margin-bottom: 0;
 }
 
 .message {
     margin-top: 5px;
+    font-size: medium;
+}
+  
+.list-avatar-page {
+    
+    ion-note {
+      font-size: 12px;
+    //   align-self: flex-start;
+      margin-top: 14px;
+    }
 }

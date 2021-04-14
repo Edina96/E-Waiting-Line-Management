@@ -18,49 +18,50 @@
 
 <ion-content>
   <div>
-  <ion-grid>
-    <ion-row class="table">
-      <ion-col>
-        <p class="title">Name</p>
-      </ion-col>
-      <ion-col>
-        <p class="title">Temperature (°C)</p>
-      </ion-col>
-    </ion-row>
+    <ion-grid>
+      <ion-row class="table">
+        <ion-col>
+          <p class="title">Name</p>
+        </ion-col>
+        <ion-col>
+          <p class="title">Temperature (°C)</p>
+        </ion-col>
+      </ion-row>
 
-    <ion-row class="ion-align-items-center">
-      <ion-col class="checkbox">
-        <ion-item lines="none">
-        <ion-checkbox class="box"></ion-checkbox>
-        <ion-label class="checkboxTitle">Johnson Doe</ion-label>
-      </ion-item>
-      </ion-col>
-      <ion-col>
-        <ion-input placeholder="37.1" required>
-        </ion-input>
-      </ion-col>
-    </ion-row>
+      <ion-row class="ion-align-items-center">
+        <ion-col class="checkbox">
+          <ion-item lines="none">
+            <ion-checkbox class="box"></ion-checkbox>
+            <ion-label class="checkboxTitle">Johnson Doe</ion-label>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-input placeholder="37.1" required [(ngModel)]="infoForm.temp1">
+          </ion-input>
+        </ion-col>
+      </ion-row>
 
-    <ion-row class="ion-align-items-center">
-      <ion-col class="checkbox">
-        <ion-item lines="none">
-        <ion-checkbox class="box"></ion-checkbox>
-        <ion-label class="checkboxTitle">Jennifer Doe</ion-label>
-      </ion-item>
-      </ion-col>
-      <ion-col>
-        <ion-input placeholder="37.1" required>
-        </ion-input>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</div>
+      <ion-row class="ion-align-items-center">
+        <ion-col class="checkbox">
+          <ion-item lines="none">
+            <ion-checkbox class="box"></ion-checkbox>
+            <ion-label class="checkboxTitle">Jennifer Doe</ion-label>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-input placeholder="37.1" required [(ngModel)]="infoForm.temp2">
+          </ion-input>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 
-    <!--Button-->
-    <div class="button">
-      <ion-button color="medium" class="ion-margin-top submit" expand="block" (click)="infoSubmitted()">Submit</ion-button>
-      <ion-button color="medium" class="ion-margin-top" expand="block" (click)="add()">Add Dependent</ion-button>
-    </div>
-    <!--/Button-->
+  <!--Button-->
+  <div class="button">
+    <ion-button color="medium" class="ion-margin-top submit" expand="block" (click)="infoSubmitted()">Submit
+    </ion-button>
+    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="add()">Add Dependent</ion-button>
+  </div>
+  <!--/Button-->
 
 </ion-content>

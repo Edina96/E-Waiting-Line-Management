@@ -20,22 +20,34 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content class="list-avatar-page">
   <ion-list>
+    <ion-list-header>Today</ion-list-header>
     <ion-item>
       <ion-grid>
         <ion-row class="ion-align-items-center">
-          <ion-col size="3">
+          <ion-col size="2">
             <ion-avatar item-start>
-              <img src="../../assets/logoDark.png">
+              <img src="../../assets/logoDark.png"class="icon">
             </ion-avatar>
           </ion-col>
           <ion-col>
             <p class="title">It's Your Turn!</p>
             <p class="message">Please proceed to the counter.</p>
+            <ion-note item-end>3:43 pm</ion-note>
           </ion-col>
         </ion-row>
       </ion-grid>
+
+      <!-- <ion-list-header>Today</ion-list-header> -->
+      <!-- <ion-item>
+      <ion-avatar slot="start">
+        <img src="../../assets/logoDark.png">
+      </ion-avatar>
+      <p>Its' Your Turn!</p>
+      <p>Please proceed to the counter.</p>
+      <ion-note item-end>3:43 pm</ion-note>
+    </ion-item> -->
     </ion-item>
   </ion-list>
 
