@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
-import { FavouritesComponent } from './favourites/favourites.component';
 import { LogoutComponent } from './logout/logout.component';
 import firebaseConfig from './firebase'
 import {AngularFireModule} from '@angular/fire';
@@ -16,8 +15,8 @@ import {AngularFireAuthModule} from '@angular/fire/auth'
 import { environment } from 'src/environments/environment';
 
 @NgModule({
-  declarations: [AppComponent, FavouritesComponent, LogoutComponent],
-  entryComponents: [FavouritesComponent],
+  declarations: [AppComponent, LogoutComponent],
+  entryComponents: [],
   imports: [BrowserModule, 
     IonicModule.forRoot(),
      AppRoutingModule,

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
-import { FavouritesComponent } from '../../favourites/favourites.component';
 
 interface DependentModel {
   name: string;
@@ -10,6 +9,7 @@ interface DependentModel {
   age: string;
   gender: string;
   address: string;
+  temp: string;
 }
 
 @Component({
@@ -21,7 +21,7 @@ export class AddDependentPage implements OnInit {
 
   public dependentForm = {} as DependentModel;
 
-  public favActive = false;
+  // public favActive = false;
 
   constructor(public navCtrl: NavController, public alertController: AlertController, public popoverController: PopoverController) { }
 
@@ -58,14 +58,18 @@ export class AddDependentPage implements OnInit {
     this.navCtrl.navigateForward('add-dependent');
   }
 
-  async favourites(ev: any) {
-    const popover = await this.popoverController.create({
-      component: FavouritesComponent,
-      event: ev,
-      animated: true,
-      showBackdrop: true
-    });
-    return await popover.present();
+  savedFavourite() {
+    this.navCtrl.navigateForward('saved-favourite');
   }
+
+  // async favourites(ev: any) {
+  //   const popover = await this.popoverController.create({
+  //     component: FavouritesComponent,
+  //     event: ev,
+  //     animated: true,
+  //     showBackdrop: true
+  //   });
+  //   return await popover.present();
+  // }
 
 }

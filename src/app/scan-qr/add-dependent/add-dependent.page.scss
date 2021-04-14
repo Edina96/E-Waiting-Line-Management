@@ -1,17 +1,42 @@
-.title {
-    text-align: center;
-    margin-bottom: 0;
+h4 {
+  margin-left: 15%;
 }
 
-ion-icon.active {
-    color: red;
+.title {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.favourite {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+
+// ion-icon.active {
+//     color: red;
+// }
+
+.input {
+  margin-top: 0px;
+  margin-left: 5%;
+  margin-right: 10%;
 }
 
 .checkbox {
-    margin-top: 10px;
-    margin-left: 10px;
+  margin-top: 5px;
+  margin-left: 10px;
 
-    .checkboxTitle {
-        margin-left: 5px;
-    }
+  .checkboxTitle {
+    margin-left: 5px;
+  }
+}
+
+.button {
+  margin-left: 10%;
+  margin-right: 10%;
+
+  .submit {
+      margin-top: 2%;
+      margin-bottom: 3%;
+  }
 }

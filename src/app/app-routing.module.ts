@@ -32,6 +32,10 @@ const routes: Routes = [
     path: 'tab4',
     loadChildren: () => import('./tab4/tab4.module').then( m => m.Tab4PageModule)
   },
+  {
+    path: 'saved-favourite',
+    loadChildren: () => import('./scan-qr/saved-favourite/saved-favourite.module').then( m => m.SavedFavouritePageModule)
+  },
 ];
 @NgModule({
   imports: [

@@ -49,7 +49,7 @@ export class Tab1Page {
         {
           text: 'OK',
           handler: () => {
-            //this.navCtrl.navigateForward('queue-info');
+            this.navCtrl.navigateForward('/tabs/tab2');
           }
         }
       ]
@@ -57,10 +57,6 @@ export class Tab1Page {
 
     await alert.present();
   }
-
-  // nextpage() {
-  //   this.navCtrl.navigateForward('queue-info');
-  // }
 
   changeShop() {
     this.navCtrl.navigateBack('shopSelection');

@@ -1,34 +1,46 @@
 <ion-header>
   <ion-toolbar color="medium">
-    <ion-title>Add Dependent</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col>
+          <ion-text color="light">
+            <h4>Add Dependent</h4>
+          </ion-text>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <p class="title">Enter your dependant's details <br> (All fields are mandatory)</p>
 
-  <div>
-    <ion-grid>
-      <ion-row class="ion-align-items-center">
+  <div class="favourite">
+    <ion-grid class="favourite">
+      <ion-row class="ion-align-items-center favourite">
         <ion-col class="ion-text-end" size="5">
-          <ion-icon name="heart-circle-outline" style="zoom:2.0;" [ngClass]="{'active': favActive}"
-            (click)="addToFavourite()" (click)="favourites($event)"></ion-icon>
+          <!-- <ion-icon name="heart-circle-outline" style="zoom:2.0;" [ngClass]="{'active': favActive}"
+            (click)="addToFavourite()" (click)="favourites($event)" (click)="savedFavourite()"></ion-icon> -->
+            <ion-icon name="heart-circle-outline" style="zoom:2.0;" (click)="savedFavourite()"></ion-icon>
         </ion-col>
         <ion-col>
-          <p>Saved Favourite</p>
+          <p (click)="savedFavourite()">Saved Favourite</p>
         </ion-col>
       </ion-row>
     </ion-grid>
   </div>
 
-  <!--User Input & Button-->
+  <!--User Input-->
   <div class="input ion-text-left">
     <ion-item>
       <ion-label position="stacked">Name</ion-label>
       <ion-input placeholder="username" required [(ngModel)]="dependentForm.name">
       </ion-input>
     </ion-item>
-    <ion-item class="ion-margin-top">
+    <ion-item>
       <ion-label position="stacked">IC Number</ion-label>
       <ion-input placeholder="920502-13-0867" required [(ngModel)]="dependentForm.ic"></ion-input>
     </ion-item>
@@ -39,39 +51,47 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">Gender</ion-label>
-
-        <ion-radio-group value="Gender" [(ngModel)]="dependentForm.gender">
-          <ion-row>
-            <ion-col>
-              <ion-item lines="none">
-                <ion-label>Male</ion-label>
-                <ion-radio slot="start" value="Male"></ion-radio>
-              </ion-item>
-            </ion-col>
-            <ion-col>
-              <ion-item lines="none">
-                <ion-label>Female</ion-label>
-                <ion-radio slot="start" value="Female"></ion-radio>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-radio-group>
+      <ion-radio-group value="Gender" [(ngModel)]="dependentForm.gender">
+        <ion-row>
+          <ion-col>
+            <ion-item lines="none">
+              <ion-label>Male</ion-label>
+              <ion-radio slot="start" value="Male"></ion-radio>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item lines="none">
+              <ion-label>Female</ion-label>
+              <ion-radio slot="start" value="Female"></ion-radio>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-radio-group>
     </ion-item>
     <ion-item>
       <ion-label position="stacked">Current Address</ion-label>
       <ion-textarea required [(ngModel)]="dependentForm.address"></ion-textarea>
     </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Temperature (°C)</ion-label>
+      <ion-input placeholder="37.1" required [(ngModel)]="dependentForm.temp">
+      </ion-input>
+    </ion-item>
 
     <div class="checkbox">
       <ion-item lines="none">
-      <ion-checkbox></ion-checkbox>
-      <ion-label class="checkboxTitle">Add to Favourite</ion-label>
-    </ion-item>
+        <ion-checkbox></ion-checkbox>
+        <ion-label class="checkboxTitle">Add to Favourite</ion-label>
+      </ion-item>
     </div>
+    <!--/User Input-->
 
-    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="infoSubmitted()">Submit</ion-button>
-    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="add()">Add Dependent</ion-button>
+    <!--Button-->
+    <div class="button">
+      <ion-button color="medium" class="ion-margin-top submit" expand="block" (click)="infoSubmitted()">Submit</ion-button>
+      <ion-button color="medium" class="ion-margin-top" expand="block" (click)="add()">Add Dependent</ion-button>
+    </div>
+    <!--/Button-->
   </div>
-  <!--/User Input & Button-->
 
 </ion-content>

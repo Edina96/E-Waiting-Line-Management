@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar color="medium">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col class="ion-text-end" size="3">
+          <ion-icon name="heart-circle-outline" style="zoom:2.0;"></ion-icon>
+        </ion-col>
+        <ion-col class="ion-text-start">
+          <p>Saved Favourite</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div>
+  <ion-grid>
+    <ion-row class="table">
+      <ion-col>
+        <p class="title">Name</p>
+      </ion-col>
+      <ion-col>
+        <p class="title">Temperature (°C)</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-align-items-center">
+      <ion-col class="checkbox">
+        <ion-item lines="none">
+        <ion-checkbox class="box"></ion-checkbox>
+        <ion-label class="checkboxTitle">Johnson Doe</ion-label>
+      </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-input placeholder="37.1" required>
+        </ion-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-align-items-center">
+      <ion-col class="checkbox">
+        <ion-item lines="none">
+        <ion-checkbox class="box"></ion-checkbox>
+        <ion-label class="checkboxTitle">Jennifer Doe</ion-label>
+      </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-input placeholder="37.1" required>
+        </ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+
+    <!--Button-->
+    <div class="button">
+      <ion-button color="medium" class="ion-margin-top submit" expand="block" (click)="infoSubmitted()">Submit</ion-button>
+      <ion-button color="medium" class="ion-margin-top" expand="block" (click)="add()">Add Dependent</ion-button>
+    </div>
+    <!--/Button-->
+
+</ion-content>
