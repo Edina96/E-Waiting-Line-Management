@@ -28,6 +28,9 @@ export class UserInfoPage implements OnInit {
     console.log(this.infoForm);
     this.navCtrl.navigateForward('login');
   }
+  savedFavourite() {
+    this.navCtrl.navigateForward('saved-favourite');
+  }
 
   async infoSubmitted() {
     console.log(this.infoForm);
