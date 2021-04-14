@@ -32,9 +32,10 @@ export class LoginPage implements OnInit {
       async () => {
         const user = await this.isLoggedIn();
         if (user)
+          alert("You've logged in successfully.") //To indicate user has logged in successfully
           this.router.navigate(['shopSelection']);
       },
-      (err) => console.log(err.message)
+      (err) => alert(err.message) //To indicate user has failed to log in along with the info on what is wrong
     ).catch(err => alert(err.message));
   }
 
