@@ -21,11 +21,17 @@
 }
 
 .button {
-    margin-left: 10%;
-    margin-right: 10%;
-  
-    .submit {
-        margin-top: 5%;
-        margin-bottom: 3%;
-    }
+  margin-left: 10%;
+  margin-right: 10%;
+
+  .submit {
+    margin-top: 5%;
+    margin-bottom: 3%;
   }
+}
+
+.temperature {
+  border-color: #6b0707;
+  border-width: 0.01em;
+  border-style: solid;
+}

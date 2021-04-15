@@ -25,6 +25,7 @@ export class UserInfoPage implements OnInit {
   }
 
   addDependent() {
+    console.log(this.infoForm);
     this.navCtrl.navigateForward('add-dependent');
   }
 

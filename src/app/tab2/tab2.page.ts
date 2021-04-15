@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class Tab2Page {
 
-  constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router) {}
+  constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router,) {}
 
   add() {
     this.navCtrl.navigateForward('shopSelection');

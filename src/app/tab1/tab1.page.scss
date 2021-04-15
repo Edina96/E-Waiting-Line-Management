@@ -23,3 +23,66 @@
     margin-top: 20px;
   }
 }
+
+// iPhone size
+@media screen and (device-aspect-ratio: 40/71) {
+  .logo {
+    width: 50%;
+    display: block;
+    margin: 5% auto;
+  }
+  .title {
+    font-size: large;
+  }
+  .number {
+    font-size: 50px;
+  }
+}
+
+//iPad size
+@media screen and (device-aspect-ratio: 3/4) {
+  .logo {
+    display: block;
+    margin: 5% auto;
+  }
+  .title {
+    font-size: x-large;
+  }
+  .number {
+    font-size: 70px;
+  }
+}
+
+@media(max-width: 1200px) {
+  h4 {
+    font-size: x-large;
+  }
+  .logo {
+    display: block;
+    margin: 5% auto;
+  }
+}
+
+@media(max-width: 992px) {
+  h4 {
+    font-size: large;
+  }
+  .logo {
+    display: block;
+    margin: 5% auto;
+  }
+  .title {
+    margin-left: 50px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  h4 {
+    margin-left: 10px;
+  }
+  .logo {
+    width: 70%;
+    display: block;
+    margin: 5% auto;
+  }
+}

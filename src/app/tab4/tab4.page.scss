@@ -1,4 +1,38 @@
 .history {
-    font-weight: bolder;
-    margin-bottom: 0px;
+  font-weight: bolder;
+  margin-bottom: 0px;
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.message {
+  margin-top: 2px;
+}
+
+@media(max-width: 1200px) {
+  h4 {
+    font-size: x-large;
+  }
+}
+
+@media(max-width: 992px) {
+  h4 {
+    font-size: large;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  h4 {
+    margin-left: 10px;
+  }
+  .title {
+    font-size: medium;
+  }
+  ion-avatar {
+    width: 80%;
+    height: auto;
+  }
 }

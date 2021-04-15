@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-logout',
@@ -7,8 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LogoutComponent implements OnInit {
 
-  constructor() { }
+  constructor(public navCtrl: NavController, public popoverController: PopoverController,) { }
 
   ngOnInit() {}
 
+  logout() {
+    this.popoverController.dismiss();
+    this.navCtrl.navigateForward('login');
+  }
 }

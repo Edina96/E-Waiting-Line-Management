@@ -15,6 +15,7 @@ export class Tab1Page {
 
   public shopID: string;
   public shopImageURL: string;
+  public ticketNumber: number;
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, public popoverController: PopoverController,) { }
 
@@ -22,6 +23,7 @@ export class Tab1Page {
     this.shopID = this.router.getCurrentNavigation().extras.state.data;
     console.log(this.shopID);
     this.updateShopImage();
+    this.ticketNumber = 0;
   }
 
   updateShopImage() {
@@ -39,12 +41,13 @@ export class Tab1Page {
   }
 
   async showTicket() {
-    console.log("ticket");
+    this.generateTicket();
+    console.log(this.ticketNumber);
     const alert = await this.alertController.create({
       header: 'Your E-ticket Number',
       message: `
       <ion-img src="./assets/ticket.svg" alt="Ticket" class="card-alert"></ion-img>
-      <p class="ticketNum">E029</p>`,
+      <p class="ticketNum">E${this.ticketNumber}</p>`,
       buttons: [
         {
           text: 'OK',
@@ -70,6 +73,11 @@ export class Tab1Page {
       showBackdrop: true
     });
     return await popover.present();
+  }
+
+  generateTicket() {
+    this.ticketNumber = this.ticketNumber + 1;
+    return this.ticketNumber;
   }
 
 }
