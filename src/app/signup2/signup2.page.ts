@@ -42,4 +42,9 @@ export class Signup2Page {
   back() {
     this.navCtrl.navigateBack('signup');
   }
+
+  login() {
+    console.log("login");
+    this.navCtrl.navigateForward('login');
+  }
 }
