@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
@@ -23,7 +23,7 @@ export class Tab1Page {
     this.shopID = this.router.getCurrentNavigation().extras.state.data;
     console.log(this.shopID);
     this.updateShopImage();
-    this.ticketNumber = 0;
+    this.ticketNumber = 100;
   }
 
   updateShopImage() {
@@ -43,16 +43,22 @@ export class Tab1Page {
   async showTicket() {
     this.generateTicket();
     console.log(this.ticketNumber);
+    let navigationExtras: NavigationExtras = { //pass data to tab 2
+      state: {
+        shopLogo: this.shopImageURL,
+        ticket: this.ticketNumber,
+      }
+    };
     const alert = await this.alertController.create({
       header: 'Your E-ticket Number',
       message: `
       <ion-img src="./assets/ticket.svg" alt="Ticket" class="card-alert"></ion-img>
-      <p class="ticketNum">E${this.ticketNumber}</p>`,
+      <p class="ticketNum">${this.ticketNumber}</p>`,
       buttons: [
         {
           text: 'OK',
           handler: () => {
-            this.navCtrl.navigateForward('/tabs/tab2');
+            this.navCtrl.navigateForward('/tabs/tab2', navigationExtras);
           }
         }
       ]
@@ -77,7 +83,7 @@ export class Tab1Page {
 
   generateTicket() {
     this.ticketNumber = this.ticketNumber + 1;
-    return this.ticketNumber;
+    return (this.ticketNumber);
   }
 
 }

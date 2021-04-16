@@ -4,23 +4,33 @@
 }
 
 .title {
-  font-weight: bold;
+  font-weight: bolder;
+  font-size: large;
   margin-bottom: 0;
 }
 
 .message {
-  margin-top: 2px;
+  margin-top: 5px;
+  font-size: medium;
 }
 
 @media(max-width: 1200px) {
   h4 {
     font-size: x-large;
   }
+  ion-avatar {
+    width: 100%;
+    height: auto;
+  }
 }
 
 @media(max-width: 992px) {
   h4 {
     font-size: large;
+  }
+  ion-avatar {
+    width: 80%;
+    height: auto;
   }
 }
 

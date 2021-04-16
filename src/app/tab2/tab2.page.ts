@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
 import { LogoutComponent } from '../logout/logout.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab2',
@@ -11,7 +11,17 @@ import { Router } from '@angular/router';
 })
 export class Tab2Page {
 
-  constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router,) {}
+  data: any;
+  shopImgURL: any;
+
+  constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router, public route: ActivatedRoute) {
+    this.route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) { //receive data from tab 1
+        this.data = this.router.getCurrentNavigation().extras.state.ticket;
+        this.shopImgURL = this.router.getCurrentNavigation().extras.state.shopLogo;
+      }
+    });
+  }
 
   add() {
     this.navCtrl.navigateForward('shopSelection');

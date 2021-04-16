@@ -27,10 +27,10 @@
     <ion-grid>
       <ion-row class="ion-align-items-center">
         <ion-col>
-          <img src="../../assets/h&mlogo.jpg" alt="shopLogo" class="shopImg">
+          <img [src]="shopImgURL" alt="shopLogo" class="shopImg">
         </ion-col>
         <ion-col>
-          <p class="ticket">E029</p>
+          <p class="ticket">{{data}}</p>
           <p class="info">20 mins left</p>
           <p class="current">Current: E021</p>
           <ion-icon name="qr-code" style="zoom:1.5"></ion-icon>
