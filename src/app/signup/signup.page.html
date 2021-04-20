@@ -31,7 +31,7 @@
   <div class="input ion-text-left">
     <ion-item>
       <ion-label position="stacked">Name</ion-label>
-      <ion-input placeholder="username" type="email" required [(ngModel)]="email">
+      <ion-input placeholder="username" required [(ngModel)]="signupForm.name">
       </ion-input>
     </ion-item>
     <ion-item>
@@ -43,7 +43,7 @@
       <ion-input placeholder="012-34568791" required [(ngModel)]="signupForm.phone">
       </ion-input>
     </ion-item>
-    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="signup()">Get Started</ion-button>
+    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="addUserToDatabase()">Get Started</ion-button>
   </div>
   <!--/User Input & Button-->
 

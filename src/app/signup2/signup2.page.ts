@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import firebase from 'firebase/app';
 import { AlertController } from '@ionic/angular';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup2',
@@ -12,9 +14,18 @@ import { AlertController } from '@ionic/angular';
 export class Signup2Page {
   username: string = "";
   password: string = "";
+  customerID: any;
 
-  constructor(public auth: AngularFireAuth, public navCtrl: NavController, public alertController: AlertController) {
+  constructor(public auth: AngularFireAuth, public navCtrl: NavController, public alertController: AlertController, public afs: AngularFirestore, public router: Router, public route: ActivatedRoute) {
+    this.route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) { //receive data from signup
+        this.customerID = this.router.getCurrentNavigation().extras.state.UserID;
+        console.log("UserID: ");
+        console.log(this.customerID);
+      }
+    });
   }
+
   ngOnInit() {
   }
 
@@ -23,7 +34,7 @@ export class Signup2Page {
     try {
       const res = await this.auth.createUserWithEmailAndPassword(username, password)
       console.log(res)
-      this.navCtrl.navigateForward('login');
+      this.addToDatabase(this.customerID);
     }
     catch (error) {
       console.dir(error)
@@ -47,4 +58,25 @@ export class Signup2Page {
     console.log("login");
     this.navCtrl.navigateForward('login');
   }
+
+  addToDatabase(id: string) {
+    const userAuthID = this.afs.createId();
+    const values = {
+      Customer_ID: userAuthID,
+      Email: this.username
+    }
+    console.log(values);
+    this.afs.collection('Customer').doc(id).update(values).then(
+      () => {
+        alert("Database Updated")
+        this.navCtrl.navigateForward('login')
+      },
+      (error) => {
+        alert("An error occurred")
+      }
+    ).catch(
+      (error) => 
+        alert("Please try again")
+    )
+  };
 }

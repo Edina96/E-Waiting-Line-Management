@@ -38,7 +38,7 @@
       <ion-input type="password" [(ngModel)]="password"></ion-input>
     </ion-item>
     <ion-button color="medium" class="ion-margin-top" expand="block" (click)="login()">Continue</ion-button>
-    <p class="forgot-pwd ion-text-center">FORGOT PASSWORD?</p>
+    <p class="forgot-pwd ion-text-center" (click)="presentAlertPrompt()">FORGOT PASSWORD?</p>
   </div>
   <!--/User Input & Button-->
 
