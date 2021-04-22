@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
+import { GlobalVariable } from '../global-variables';
 
 interface SignUpModel {
   name: string;
@@ -18,9 +19,11 @@ interface SignUpModel {
 export class SignupPage implements OnInit {
 
   public signupForm = {} as SignUpModel;
-  public userID: string;
+  public authUserID: string;
 
-  constructor(public navCtrl: NavController, public afAuth: AngularFireAuth, public afs: AngularFirestore, public router: Router) { }
+  constructor(public navCtrl: NavController, public afAuth: AngularFireAuth, public afs: AngularFirestore, public router: Router, public globalVar: GlobalVariable) {
+    this.authUserID = globalVar.authUserID;
+  }
 
   ngOnInit() {
   }
@@ -32,6 +35,7 @@ export class SignupPage implements OnInit {
 
   addUserToDatabase() {
     const userAuthID = this.afs.createId();
+    this.globalVar.authUserID = userAuthID;
     const values = {
       Customer_ID: userAuthID,
       Customer_Name: this.signupForm.name,
@@ -41,17 +45,9 @@ export class SignupPage implements OnInit {
     console.log(values);
     this.afs.collection('Customer').doc(userAuthID).set(values).then(
       () => {
-        alert("Successful")
-        let navigationExtras: NavigationExtras = { //pass data to signup2
-          state: {
-            UserID: userAuthID,
-          }
-        };
-        this.navCtrl.navigateForward('signup2', navigationExtras)
+        this.navCtrl.navigateForward('signup2')
       },
-      (error) => {
-        alert("An error occurred")
-      }
+      (error) => alert("An error occurred")
     ).catch(
       (error) => alert("Please try again")
     )

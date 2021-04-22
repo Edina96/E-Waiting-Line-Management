@@ -17,8 +17,8 @@
 
 <ion-content>
   <!--User Input & Button-->
-  <div class="input ion-text-center">
-    <p style="font-weight: bold;">Hi, John Doe</p>
+  <div class="input ion-text-center" *ngFor="let user of userInfo | async">
+    <p style="font-weight: bold;">Hi, {{ user.Customer_Name }}</p>
     <img src="../../../assets/checkTemp.png" class="checkTemp">
     <ion-item>
       <ion-label class="title" position="stacked">Please enter your temperature (°C)</ion-label>

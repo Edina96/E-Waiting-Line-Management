@@ -13,6 +13,7 @@ import firebaseConfig from './firebase'
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth'
 import { environment } from 'src/environments/environment';
+import { GlobalVariable } from './global-variables';
 
 @NgModule({
   declarations: [AppComponent, LogoutComponent],
@@ -24,7 +25,8 @@ import { environment } from 'src/environments/environment';
     AngularFireAuthModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-  QRScanner],
+  QRScanner,
+  GlobalVariable],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
