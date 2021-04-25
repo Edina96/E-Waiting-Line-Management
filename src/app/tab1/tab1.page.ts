@@ -4,6 +4,8 @@ import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
 import { LogoutComponent } from '../logout/logout.component';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { GlobalVariable } from '../global-variables';
 
 @Component({
   selector: 'app-tab1',
@@ -16,8 +18,10 @@ export class Tab1Page {
   public shopID: string;
   public shopImageURL: string;
   public ticketNumber: number;
+  globalVar: GlobalVariable;
+  public visitingShopID: string;
 
-  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, public popoverController: PopoverController,) { }
+  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, public popoverController: PopoverController, public afs: AngularFirestore, globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
   ngOnInit() {
     this.shopID = this.router.getCurrentNavigation().extras.state.data;
@@ -38,6 +42,16 @@ export class Tab1Page {
         this.shopImageURL = '../../assets/watsonslogo.png';
         break;
     }
+    this.getShopID();
+  }
+
+  getShopID() { //Get ID of visiting shop
+    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.shopID)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.visitingShopID = element.get('Shop_ID');
+        this.globalVar.visitingShop = this.visitingShopID;
+      }) 
+    });
   }
 
   async showTicket() {

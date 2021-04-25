@@ -18,7 +18,6 @@ export class UserInfoPage implements OnInit {
 
   globalVar: GlobalVariable;
   public userInfo: Observable<any[]>;
-
   public infoForm = {} as InfoModel;
 
   constructor(public navCtrl: NavController, public alertController: AlertController, public afs: AngularFirestore, globalVar: GlobalVariable) { 
@@ -36,19 +35,17 @@ export class UserInfoPage implements OnInit {
   }
 
   addDependent() {
+    this.addTemperatureToDB(this.globalVar.authUserID);
     console.log(this.infoForm);
     this.navCtrl.navigateForward('add-dependent');
   }
 
-  submit() {
-    console.log(this.infoForm);
-    this.navCtrl.navigateForward('login');
-  }
   savedFavourite() {
     this.navCtrl.navigateForward('saved-favourite');
   }
 
   async infoSubmitted() {
+    this.addTemperatureToDB(this.globalVar.authUserID);
     console.log(this.infoForm);
     const alert = await this.alertController.create({
       header: 'Success',
@@ -67,8 +64,26 @@ export class UserInfoPage implements OnInit {
   }
 
   getUsernameFromDB() {
-    this.userInfo = this.afs.collection('Customer', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).valueChanges(); //valueChanges to get data from all field, need to save to observable
+    this.userInfo = this.afs.collection('Customer', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).valueChanges(); //use valueChanges to get data from all field, need to save to observable
     console.log(this.userInfo);
+  }
+
+  addTemperatureToDB(id: String) {
+    const customerRecordID = this.afs.createId();
+    const values = {
+      Customer_ID: id,
+      Customer_Record_ID: customerRecordID,
+      Customer_Temperature: this.infoForm.temperature,
+      Shop_ID: this.globalVar.visitingShop
+    }
+    this.afs.collection('CustomerRecord').doc(customerRecordID).set(values).then(
+      () => {
+        console.log("Successfully added to Database.")
+      },
+      (error) => alert("An error occurred")
+    ).catch(
+      (error) => alert("Please try again")
+    )
   }
 
 }

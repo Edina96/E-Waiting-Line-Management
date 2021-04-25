@@ -10,7 +10,7 @@ import { LogoutComponent } from '../logout/logout.component';
 })
 export class ShopSelectionPage implements OnInit {
 
-  constructor(public router: Router, public popoverController: PopoverController) {}
+  constructor(public router: Router, public popoverController: PopoverController) { }
 
   ngOnInit() {
   }

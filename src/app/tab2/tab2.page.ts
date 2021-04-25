@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
 import { LogoutComponent } from '../logout/logout.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVariable } from '../global-variables';
 
 @Component({
   selector: 'app-tab2',
@@ -13,12 +14,16 @@ export class Tab2Page {
 
   data: any;
   shopImgURL: any;
+  globalVar: GlobalVariable;
 
-  constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router, public route: ActivatedRoute) {
+  constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router, public route: ActivatedRoute, globalVar: GlobalVariable) {
+    this.globalVar = globalVar;
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) { //receive data from tab 1
         this.data = this.router.getCurrentNavigation().extras.state.ticket;
         this.shopImgURL = this.router.getCurrentNavigation().extras.state.shopLogo;
+        console.log("Visiting Shop ID: ");
+        console.log(this.globalVar.visitingShop);
       }
     });
   }

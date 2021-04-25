@@ -59,9 +59,15 @@ export class AddDependentPage implements OnInit {
     await alert.present();
   }
 
-  add() {
+  add() { //Add more dependent
     console.log(this.dependentForm);
-    this.navCtrl.navigateForward('add-dependent');
+    this.addToDatabase(this.globalVar.authUserID);
+    this.dependentForm.name = ''; //clear inputs
+    this.dependentForm.ic = '';
+    this.dependentForm.age = '';
+    this.dependentForm.gender = '';
+    this.dependentForm.address = '';
+    this.dependentForm.temp = '';
   }
 
   savedFavourite() {
@@ -88,6 +94,25 @@ export class AddDependentPage implements OnInit {
     ).catch(
       (error) => alert("Please try again")
     )
+    this.addTemperatureToDB(this.globalVar.authUserID, dependentAuthID);
   };
+
+  addTemperatureToDB(customerID: String, dependentID: string) {
+    const dependentRecordID = this.afs.createId();
+    const value = {
+      Customer_ID: customerID,
+      Dependent_ID: dependentID,
+      Dependent_Record_ID: dependentRecordID,
+      Dependent_Temperature: this.dependentForm.temp
+    }
+    this.afs.collection('DependentRecord').doc(dependentRecordID).set(value).then(
+      () => {
+        console.log("Successfully added to Database.")
+      },
+      (error) => alert("An error occurred")
+    ).catch(
+      (error) => alert("Please try again")
+    )
+  }
 
 }
