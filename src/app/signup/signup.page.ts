@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { GlobalVariable } from '../global-variables';
 
 interface SignUpModel {
@@ -20,8 +20,9 @@ export class SignupPage implements OnInit {
 
   public signupForm = {} as SignUpModel;
   public authUserID: string;
+  public userIC: string;
 
-  constructor(public navCtrl: NavController, public afAuth: AngularFireAuth, public afs: AngularFirestore, public router: Router, public globalVar: GlobalVariable) {
+  constructor(public navCtrl: NavController, public afAuth: AngularFireAuth, public afs: AngularFirestore, public router: Router, public globalVar: GlobalVariable, public alertController: AlertController) {
     this.authUserID = globalVar.authUserID;
   }
 
@@ -33,24 +34,32 @@ export class SignupPage implements OnInit {
     this.navCtrl.navigateForward('login');
   }
 
-  addUserToDatabase() {
-    const userAuthID = this.afs.createId();
-    this.globalVar.authUserID = userAuthID;
-    const values = {
-      Customer_ID: userAuthID,
-      Customer_Name: this.signupForm.name,
-      Customer_IC: this.signupForm.ic,
-      Customer_Contact: this.signupForm.phone
+  formValidator() { //Check IC pattern
+    if (!this.signupForm.ic.match(/^\d{6}-\d{2}-\d{4}$/)) {
+      this.presentAlertPrompt();
+    } else {
+      this.passToNextPage();
     }
-    console.log(values);
-    this.afs.collection('Customer').doc(userAuthID).set(values).then(
-      () => {
-        this.navCtrl.navigateForward('signup2')
-      },
-      (error) => alert("An error occurred")
-    ).catch(
-      (error) => alert("Please try again")
-    )
+  }
+
+  passToNextPage() { //pass data to signup2 page
+    let navigationExtras: NavigationExtras = {
+      state: {
+        form_name: this.signupForm.name,
+        form_ic: this.signupForm.ic,
+        form_phone: this.signupForm.phone
+      }
+    };
+    this.navCtrl.navigateForward('signup2', navigationExtras);
   };
+
+  async presentAlertPrompt() { //Alert box IC error
+    const alert = await this.alertController.create({
+      header: 'Sign Up Error',
+      subHeader: 'IC should be in xxxxxx-xx-xxxx format. Please try again.',
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
 
 }
