@@ -25,6 +25,7 @@ export class AddDependentPage implements OnInit {
   public dependentForm = {} as DependentModel;
   globalVar: GlobalVariable;
   public authDependentID: string;
+  myBoolean = false;
 
   // public favActive = false;
 
@@ -70,6 +71,10 @@ export class AddDependentPage implements OnInit {
     this.dependentForm.temp = '';
   }
 
+  onMyBooleanChange() {
+    console.log(this.myBoolean);
+  }
+
   savedFavourite() {
     this.navCtrl.navigateForward('saved-favourite');
   }
@@ -83,7 +88,8 @@ export class AddDependentPage implements OnInit {
       Dependent_Age: this.dependentForm.age,
       Dependent_Gender: this.dependentForm.gender,
       Dependent_Address: this.dependentForm.address,
-      Customer_ID: id
+      Customer_ID: id,
+      SavedFavourite: this.myBoolean
     }
     console.log(values);
     this.afs.collection('Dependent').doc(dependentAuthID).set(values).then(

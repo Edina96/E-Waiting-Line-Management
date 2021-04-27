@@ -80,7 +80,7 @@
 
     <div class="checkbox">
       <ion-item lines="none">
-        <ion-checkbox></ion-checkbox>
+        <ion-checkbox [(ngModel)]="myBoolean" (ionChange)="onMyBooleanChange()"></ion-checkbox>
         <ion-label class="checkboxTitle">Add to Favourite</ion-label>
       </ion-item>
     </div>

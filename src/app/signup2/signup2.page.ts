@@ -13,14 +13,22 @@ import { GlobalVariable } from '../global-variables';
   styleUrls: ['./signup2.page.scss'],
 })
 export class Signup2Page {
+  userName: any;
+  userIC: any;
+  userPhone: any;
   username: string = "";
   password: string = "";
-  globalVar: GlobalVariable;
+  public authUserID: string;
 
-  constructor(public auth: AngularFireAuth, public navCtrl: NavController, public alertController: AlertController, public afs: AngularFirestore, public router: Router, public route: ActivatedRoute, public toastController: ToastController, globalVar: GlobalVariable) {
-    this.globalVar = globalVar;
-    console.log("Global Variable: ");
-    console.log(this.globalVar.authUserID);
+  constructor(public auth: AngularFireAuth, public navCtrl: NavController, public alertController: AlertController, public afs: AngularFirestore, public router: Router, public route: ActivatedRoute, public toastController: ToastController, public globalVar: GlobalVariable) {
+    this.authUserID = globalVar.authUserID;
+    this.route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) { //receive data from signup page
+        this.userName = this.router.getCurrentNavigation().extras.state.form_name;
+        this.userIC = this.router.getCurrentNavigation().extras.state.form_ic;
+        this.userPhone = this.router.getCurrentNavigation().extras.state.form_phone;
+      }
+    });
   }
 
   ngOnInit() {
@@ -31,7 +39,7 @@ export class Signup2Page {
     try {
       const res = await this.auth.createUserWithEmailAndPassword(username, password)
       console.log(res)
-      this.addToDatabase(this.globalVar.authUserID);
+      this.addAllToDatabase();
     }
     catch (error) {
       console.dir(error)
@@ -56,21 +64,26 @@ export class Signup2Page {
     this.navCtrl.navigateForward('login');
   }
 
-  addToDatabase(id: string) { //add email to database in customer document
+  addAllToDatabase() { //Add all user info to db
+    const userAuthID = this.afs.createId();
+    this.globalVar.authUserID = userAuthID;
     const values = {
+      Customer_ID: userAuthID,
+      Customer_Name: this.userName,
+      Customer_IC: this.userIC,
+      Customer_Contact: this.userPhone,
       Email: this.username
     }
     console.log(values);
-    this.afs.collection('Customer').doc(id).update(values).then(
+    this.afs.collection('Customer').doc(userAuthID).set(values).then(
       () => {
-        this.registerSuccessToast();
         this.navCtrl.navigateForward('login')
       },
       (error) => alert("An error occurred")
     ).catch(
       (error) => alert("Please try again")
     )
-  };
+  }
 
   async registerSuccessToast() { //Toast for successful register
     const toast = await this.toastController.create({

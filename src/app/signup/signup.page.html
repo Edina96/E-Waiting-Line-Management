@@ -40,10 +40,10 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">Phone Number</ion-label>
-      <ion-input placeholder="012-34568791" required [(ngModel)]="signupForm.phone">
+      <ion-input placeholder="01234568791" type="number" required [(ngModel)]="signupForm.phone">
       </ion-input>
     </ion-item>
-    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="addUserToDatabase()">Get Started</ion-button>
+    <ion-button color="medium" class="ion-margin-top" expand="block" (click)="formValidator()">Get Started</ion-button>
   </div>
   <!--/User Input & Button-->
 
