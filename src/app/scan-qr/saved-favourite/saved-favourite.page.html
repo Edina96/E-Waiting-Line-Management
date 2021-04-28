@@ -28,37 +28,26 @@
         </ion-col>
       </ion-row>
 
-      <ion-row class="ion-align-items-center">
-        <ion-col class="checkbox" size="7">
-          <ion-item lines="none">
-            <ion-checkbox class="box"></ion-checkbox>
-            <ion-label class="checkboxTitle">{{dependentName}}</ion-label>
-          </ion-item>
-        </ion-col>
-        <ion-col class="temperature" size="5">
-          <ion-input placeholder="37.1" required [(ngModel)]="infoForm.temp1">
-          </ion-input>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="ion-align-items-center">
-        <ion-col class="checkbox" size="7">
-          <ion-item lines="none">
-            <ion-checkbox class="box"></ion-checkbox>
-            <ion-label class="checkboxTitle">Jennifer Doe</ion-label>
-          </ion-item>
-        </ion-col>
-        <ion-col class="temperature" size="5">
-          <ion-input placeholder="37.1" required [(ngModel)]="infoForm.temp2">
-          </ion-input>
-        </ion-col>
-      </ion-row>
+      <div *ngIf="dependentArray.length > 0">
+        <ion-row class="ion-align-items-center" *ngFor="let name of dependentArray">
+          <ion-col class="checkbox" size="7">
+            <ion-item lines="none">
+              <ion-checkbox class="box" [value]="name" (ionChange)="onMyBooleanChange($event, name)">
+              </ion-checkbox>
+              <ion-label class="checkboxTitle">{{ name }}</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col class="temperature" size="5">
+              <ion-input placeholder="37.1" required (change)="onTempChange($event)"></ion-input>
+          </ion-col>
+        </ion-row>
+      </div>
     </ion-grid>
   </div>
 
   <!--Button-->
   <div class="button">
-    <ion-button color="medium" class="ion-margin-top submit" expand="block" (click)="infoSubmitted()">Submit
+    <ion-button color="medium" class="ion-margin-top submit" expand="block" (click)="getDependentIDs()">Submit
     </ion-button>
     <ion-button color="medium" class="ion-margin-top" expand="block" (click)="add()">Add Dependent</ion-button>
   </div>
