@@ -14,7 +14,7 @@ import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth'
 import { environment } from 'src/environments/environment';
 import { GlobalVariable } from './global-variables';
-
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx'
 @NgModule({
   declarations: [AppComponent, LogoutComponent],
   entryComponents: [],
@@ -24,9 +24,11 @@ import { GlobalVariable } from './global-variables';
     AngularFireModule.initializeApp(environment),
     AngularFireAuthModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  providers: [{ provide: RouteReuseStrategy, 
+    useClass: IonicRouteStrategy },
   QRScanner,
-  GlobalVariable],
+  GlobalVariable,BarcodeScanner],
+  
   bootstrap: [AppComponent],
 })
 export class AppModule {}

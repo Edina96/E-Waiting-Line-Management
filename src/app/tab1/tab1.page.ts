@@ -67,7 +67,7 @@ export class Tab1Page {
       header: 'Your E-ticket Number',
       message: `
       <ion-img src="./assets/ticket.svg" alt="Ticket" class="card-alert"></ion-img>
-      <p class="ticketNum">${this.ticketNumber}</p>`,
+      <p class="ticketNum" style:text-align="center">${this.ticketNumber}</p>`,
       buttons: [
         {
           text: 'OK',
