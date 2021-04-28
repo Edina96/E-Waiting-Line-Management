@@ -1,15 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
-import { AlertController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
 import { GlobalVariable } from '../../global-variables';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-
-interface InfoModel {
-  temp1: string;
-  temp2: string;
-}
 
 @Component({
   selector: 'app-saved-favourite',
@@ -18,20 +11,26 @@ interface InfoModel {
 })
 export class SavedFavouritePage implements OnInit {
 
-  public infoForm = {} as InfoModel;
   globalVar: GlobalVariable;
-  // public savedDependentInfo: Observable<any[]>;
   public savedDependentInfo: boolean;
   public dependentName: string;
+  dependentArray = [];
+  public dependentID: string;
+  checked = [];
+  values = [];
+  public size: number;
+  public checkedSize: number;
 
   constructor(public navCtrl: NavController, public alertController: AlertController, public popoverController: PopoverController, public afs: AngularFirestore, globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
   ngOnInit() {
+    this.size = 0;
+    this.checkedSize = 0;
     this.getSavedDependentFromDB();
   }
 
   async infoSubmitted() {
-    console.log(this.infoForm);
+    // this.getDependentIDs();
     const alert = await this.alertController.create({
       header: 'Success',
       subHeader: 'You have successfully check-in.',
@@ -45,24 +44,89 @@ export class SavedFavouritePage implements OnInit {
         }
       ]
     });
-
     await alert.present();
   }
 
   add() {
-    // console.log(this.dependentForm);
     this.navCtrl.navigateForward('add-dependent');
   }
 
-  getSavedDependentFromDB() {
+  onTempChange(event) { //Save temperature Inputs into array
+    this.values.push(event.target.value);
+  }
+
+  onMyBooleanChange(event, checkbox: string) {
+    if (event.target.checked) {
+      this.checked.push(checkbox);
+    } else {
+      let index = this.removeCheckedFromArray(checkbox);
+      this.checked.splice(index, 1);
+    }
+    console.log(this.checked);
+  }
+
+  removeCheckedFromArray(checkbox: string) {
+    return this.checked.findIndex((category) => {
+      return category === checkbox;
+    })
+  }
+
+  getSavedDependentFromDB() { //Get saved dependent name, display in list
     this.afs.collection('Dependent', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+      this.dependentArray = [];
       resp.forEach(element => {
         this.savedDependentInfo = element.get('SavedFavourite');
         if (this.savedDependentInfo === true) {
-          this.dependentName = element.get('Dependent_Name')
-          console.log("Saved Favourite: " + this.dependentName)
+          this.dependentArray.push(element.get('Dependent_Name'));
         }
       }) 
-    }); //use subscribe, foreach if no document id
+      return this.dependentArray;
+    });
+  }
+
+  addTemperatureToDB(i: number) {
+    const dependentRecordID = this.afs.createId();
+    const values = {
+      Customer_ID: this.globalVar.authUserID,
+      Dependent_ID: this.dependentID,
+      Dependent_Record_ID: dependentRecordID,
+      Dependent_Temperature: this.values[i]
+    } 
+    this.afs.collection('DependentRecord').doc(dependentRecordID).set(values).then(
+      () => {
+        console.log("Successfully added to Database.")
+      },
+      (error) => alert("An error occurred")
+    ).catch(
+      (error) => alert("Please try again")
+    )
+  }
+
+  getDependentIDs() {
+    this.size = this.values.length;
+    this.checkedSize = this.checked.length;
+    if (this.size == this.checkedSize ) {
+      for (let i = 0; i < this.size; i++) {
+        this.afs.collection('Dependent', ref => ref.where('Dependent_Name', '==', this.checked[i])).get().subscribe(resp => {
+          resp.forEach(element => {
+            this.dependentID = element.get('Dependent_ID');
+            this.addTemperatureToDB(i);
+          }) 
+          console.log("Temp: " + this.values);
+          this.infoSubmitted();
+        });
+      }
+    } else {
+      this.presentAlertPrompt();
+    }
+  }
+
+  async presentAlertPrompt() { //Alert box for submission error
+    const alert = await this.alertController.create({
+      header: 'Submission Error',
+      subHeader: 'Please make sure all temperature of checked dependents are written.',
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 }
