@@ -3,6 +3,8 @@ import { NavController, AlertController } from '@ionic/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { GlobalVariable } from '../../global-variables';
 import { Observable } from 'rxjs';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 interface InfoModel {
   temperature: string;
@@ -15,11 +17,11 @@ interface InfoModel {
 })
 export class UserInfoPage implements OnInit {
 
-  globalVar: GlobalVariable;
   public userInfo: Observable<any[]>;
   public infoForm = {} as InfoModel;
+  public recordID: string;
 
-  constructor(public navCtrl: NavController, public alertController: AlertController, public afs: AngularFirestore, globalVar: GlobalVariable) {
+  constructor(public navCtrl: NavController, public alertController: AlertController, public afs: AngularFirestore, public globalVar: GlobalVariable) {
     this.globalVar = globalVar;
     console.log("Global Variable: ");
     console.log(this.globalVar.authUserID);
@@ -75,21 +77,25 @@ export class UserInfoPage implements OnInit {
   }
 
   addTemperatureToDB(id: String) {
-    const customerRecordID = this.afs.createId();
     const values = {
-      Customer_ID: id,
-      Customer_Record_ID: customerRecordID,
       Customer_Temperature: this.infoForm.temperature,
+      Customer_WalkInDate: new Date(firebase.firestore.Timestamp.now().seconds*1000).toDateString(),
+      Customer_WalkInTime: new Date(firebase.firestore.Timestamp.now().seconds*1000).toLocaleTimeString(),
       Shop_ID: this.globalVar.visitingShop
     }
-    this.afs.collection('CustomerRecord').doc(customerRecordID).set(values).then(
-      () => {
-        console.log("Successfully added to Database.")
-      },
-      (error) => alert("An error occurred")
-    ).catch(
-      (error) => alert("Please try again")
-    )
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.recordID = element.get('Customer_Record_ID');
+        this.afs.collection('CustomerRecord').doc(this.recordID).update(values).then(
+          () => {
+            console.log("Successfully added to Database.")
+          },
+          (error) => alert("An error occurred")
+        ).catch(
+          (error) => alert("Please try again")
+        );
+      }) 
+    });
   }
 
   checkTemperature() {

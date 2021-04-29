@@ -49,7 +49,6 @@ export class AddDependentPage implements OnInit {
       if (!this.dependentForm.ic.match(/^\d{6}-\d{2}-\d{4}$/)) {
         this.presentAlertPrompt();
       } else {
-        //this.check(this.globalVar.authUserID);
         this.addToDatabase(this.globalVar.authUserID);
         const alert = await this.alertController.create({
           header: 'Dependent Added Successfully',

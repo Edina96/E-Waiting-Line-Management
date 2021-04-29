@@ -23,6 +23,7 @@
 <ion-content [fullscreen]="true">
   <h3 class="history ion-margin">History</h3>
   <ion-list class="list">
+    <div *ngFor="let history of historyArray">
     <ion-item>
       <ion-grid>
         <ion-row class="ion-align-items-center">
@@ -32,28 +33,13 @@
             </ion-avatar>
           </ion-col>
           <ion-col>
-            <p class="title">Check-in at H&M</p>
-            <p class="message">01:11pm April 16, 2021</p>
+            <p class="title">Check-in at {{ history.shopName }}</p>
+            <p class="message">{{ history.walkInTime }} {{ history.walkInDate }}</p>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ion-item>
-
-    <ion-item>
-      <ion-grid>
-        <ion-row class="ion-align-items-center">
-          <ion-col size="2">
-            <ion-avatar item-start>
-              <img src="../../assets/logoDark.png">
-            </ion-avatar>
-          </ion-col>
-          <ion-col>
-            <p class="title">Check-in at Sushi King</p>
-            <p class="message">01:14pm March 14, 2021</p>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-item>
+  </div>
   </ion-list>
 
 </ion-content>

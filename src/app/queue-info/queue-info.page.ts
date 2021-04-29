@@ -4,6 +4,8 @@ import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { GlobalVariable } from '../global-variables';
 
 @Component({
   selector: 'app-queue-info',
@@ -15,14 +17,17 @@ export class QueueInfoPage implements OnInit {
   public ticketShopID: string;
   public ticketShopImageURL: string;
   public ticketShopName: string = '';
+  public ticketNumber: number;
+  public ticketID: string;
   scannedCode = null;
 
-  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, private barcodeScanner: BarcodeScanner) { }
+  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, private barcodeScanner: BarcodeScanner, public afs: AngularFirestore, public globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
   ngOnInit() {
     this.ticketShopID = this.router.getCurrentNavigation().extras.state.data;
     console.log(this.ticketShopID);
     this.updateShopImage();
+    this.getTicketNumber();
   }
 
   updateShopImage() {
@@ -58,7 +63,6 @@ export class QueueInfoPage implements OnInit {
         }
       ]
     });
-
     await alert.present();
   }
 
@@ -95,4 +99,14 @@ export class QueueInfoPage implements OnInit {
     //   this.navCtrl.navigateForward("user-info");
       //Testing
        this.navCtrl.navigateForward("user-info");
-  }}
+  }
+
+  getTicketNumber() {
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.ticketNumber = element.get('Ticket_Number');
+        console.log("Ticket Number DB: " + this.ticketNumber);
+      }) 
+    });
+  }
+}

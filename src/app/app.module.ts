@@ -11,6 +11,7 @@ import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { LogoutComponent } from './logout/logout.component';
 import firebaseConfig from './firebase'
 import {AngularFireModule} from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 import {AngularFireAuthModule} from '@angular/fire/auth'
 import { environment } from 'src/environments/environment';
 import { GlobalVariable } from './global-variables';
@@ -22,6 +23,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx'
     IonicModule.forRoot(),
      AppRoutingModule,
     AngularFireModule.initializeApp(environment),
+    AngularFirestoreModule,
     AngularFireAuthModule
   ],
   providers: [{ provide: RouteReuseStrategy, 
