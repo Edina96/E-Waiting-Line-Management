@@ -14,10 +14,9 @@ export class Tab4Page implements OnInit {
 
   public shopID: string;
   public shopName: string;
-  public globalVar: GlobalVariable;
   public historyArray = [];
 
-  constructor(public navCtrl: NavController, public popoverController: PopoverController, public afs: AngularFirestore, globalVar: GlobalVariable) { this.globalVar = globalVar; }
+  constructor(public navCtrl: NavController, public popoverController: PopoverController, public afs: AngularFirestore, public globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
   ngOnInit() {
     this.getHistoryDetails();

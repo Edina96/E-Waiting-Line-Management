@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
 import { LogoutComponent } from '../logout/logout.component';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { GlobalVariable } from '../global-variables';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 @Component({
   selector: 'app-tab1',
@@ -20,6 +22,7 @@ export class Tab1Page {
   public ticketNumber: number;
   public visitingShopID: string;
   public ticketID: string;
+  public checkDate: string;
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, public popoverController: PopoverController, public afs: AngularFirestore, public globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
@@ -49,17 +52,11 @@ export class Tab1Page {
       resp.forEach(element => {
         this.visitingShopID = element.get('Shop_ID');
         this.globalVar.visitingShop = this.visitingShopID;
-      }) 
+      })
     });
   }
 
   async showTicket(ticketNumber: number) {
-    let navigationExtras: NavigationExtras = { //pass data to tab 2
-      state: {
-        shopLogo: this.shopImageURL,
-        ticket: ticketNumber,
-      }
-    };
     const alert = await this.alertController.create({
       header: 'Your E-ticket Number',
       message: `
@@ -69,7 +66,7 @@ export class Tab1Page {
         {
           text: 'OK',
           handler: () => {
-            this.navCtrl.navigateForward('/tabs/tab2', navigationExtras);
+            this.navCtrl.navigateForward('/tabs/tab2');
           }
         }
       ]
@@ -91,7 +88,7 @@ export class Tab1Page {
         this.updateTicketNumber(this.ticketNumber, this.ticketID);
         this.storeTicketNumber(this.ticketNumber);
         this.showTicket(this.ticketNumber);
-      }) 
+      })
     });
   }
 
@@ -109,11 +106,14 @@ export class Tab1Page {
     );
   }
 
-  storeTicketNumber(ticketNumber: number) { //Store in Customer Collection
+  storeTicketNumber(ticketNumber: number) { //Store in CustomerRecord Collection
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     const customerRecordID = this.afs.createId();
     const value = {
       Customer_ID: this.globalVar.authUserID,
       Customer_Record_ID: customerRecordID,
+      Shop_ID: this.globalVar.visitingShop,
+      Customer_WalkInDate: this.checkDate,
       Ticket_Number: ticketNumber
     }
     this.afs.collection('CustomerRecord').doc(customerRecordID).set(value).then(

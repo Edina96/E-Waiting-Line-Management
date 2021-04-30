@@ -6,6 +6,9 @@ import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { GlobalVariable } from '../global-variables';
+import { Observable } from 'rxjs';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 @Component({
   selector: 'app-queue-info',
@@ -19,9 +22,14 @@ export class QueueInfoPage implements OnInit {
   public ticketShopName: string = '';
   public ticketNumber: number;
   public ticketID: string;
+  public shopInfo: Observable<any[]>;
+  public checkDate: string;
   scannedCode = null;
 
-  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, private barcodeScanner: BarcodeScanner, public afs: AngularFirestore, public globalVar: GlobalVariable) { this.globalVar = globalVar; }
+  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, private barcodeScanner: BarcodeScanner, public afs: AngularFirestore, public globalVar: GlobalVariable) {
+    this.globalVar = globalVar;
+    this.getShopMaxCapacity();
+  }
 
   ngOnInit() {
     this.ticketShopID = this.router.getCurrentNavigation().extras.state.data;
@@ -57,6 +65,7 @@ export class QueueInfoPage implements OnInit {
         {
           text: 'YES',
           handler: () => {
+            this.getTicketNumberFromDB();
             console.log("Ticket Canceled");
             this.navCtrl.navigateForward('/tabs/tab2');
           }
@@ -64,6 +73,62 @@ export class QueueInfoPage implements OnInit {
       ]
     });
     await alert.present();
+  }
+
+  getTicketNumberFromDB() { //From Ticket Collection
+    this.afs.collection('Ticket', ref => ref.where('Shop_ID', '==', this.globalVar.visitingShop)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.ticketNumber = element.get('Total_Tickets');
+        this.ticketID = element.get('Ticket_ID');
+        this.ticketNumber -= 1;
+        console.log("Ticket Number DB: " + this.ticketNumber);
+        this.updateTicketNumber(this.ticketNumber, this.ticketID);
+        this.getCustomerRecordID();
+      })
+    });
+  }
+
+  updateTicketNumber(ticketNumber: number, ticketID: string) { //Store in Ticket Collection
+    const value = {
+      Total_Tickets: ticketNumber
+    }
+    this.afs.collection('Ticket').doc(ticketID).update(value).then(
+      () => {
+        console.log("Successfully added to Database.")
+      },
+      (error) => alert("An error occurred")
+    ).catch(
+      (error) => alert("Please try again")
+    );
+  }
+
+  getCustomerRecordID() {
+    var customerRecordID = "";
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+      resp.forEach(element => {
+        if (element.get('Shop_ID') == this.globalVar.visitingShop && element.get('Customer_WalkInDate') == this.checkDate) {
+          customerRecordID = element.get('Customer_Record_ID');
+          this.afs.collection('CustomerRecord').doc(customerRecordID).delete();
+          this.globalVar.ticketInfoArray.splice(0, 2);
+        }
+      })
+    });
+  }
+
+  getTicketNumber() { //Display assigned ticket number in page
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+      resp.forEach(element => {
+        if (element.get('Shop_ID') == this.globalVar.visitingShop && element.get('Customer_WalkInDate') == this.checkDate) {
+          this.ticketNumber = element.get('Ticket_Number');
+        }
+      })
+    });
+  }
+
+  getShopMaxCapacity() { //Display max capacity in page
+    this.shopInfo = this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', this.globalVar.visitingShop)).valueChanges();
+    console.log(this.shopInfo);
   }
 
   scanCode() {
@@ -97,16 +162,7 @@ export class QueueInfoPage implements OnInit {
     //   console.log("scanned");
 
     //   this.navCtrl.navigateForward("user-info");
-      //Testing
-       this.navCtrl.navigateForward("user-info");
-  }
-
-  getTicketNumber() {
-    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
-      resp.forEach(element => {
-        this.ticketNumber = element.get('Ticket_Number');
-        console.log("Ticket Number DB: " + this.ticketNumber);
-      }) 
-    });
+    //Testing
+    this.navCtrl.navigateForward("user-info");
   }
 }

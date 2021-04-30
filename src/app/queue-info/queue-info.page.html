@@ -19,13 +19,13 @@
 <ion-content>
   <!-- Info-->
   <div class="content">
-    <div class="info">
+    <div class="info" *ngFor="let shop of shopInfo | async">
       <p class="title">Current E-Ticket Number:</p>
       <p class="data">E021</p>
       <p class="title">Your E-Ticket Number:</p>
       <p class="data">{{ this.ticketNumber }}</p>
       <p class="title">Maximum Capacity:</p>
-      <p class="data">20:00</p>
+      <p class="data">{{ shop.Max_Capacity }}</p>
       <p class="title">Number of People In Shop:</p>
       <p class="data">20</p>
       <p class="title">Number of People In Queue:</p>

@@ -4,4 +4,5 @@ import { Injectable } from '@angular/core';
 export class GlobalVariable {
     authUserID: string = '';
     visitingShop: string = '';
+    ticketInfoArray = [];
 }
