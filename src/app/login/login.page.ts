@@ -17,10 +17,9 @@ export class LoginPage implements OnInit {
   username: string = "";
   password: string = "";
   logindeterminer: boolean = false;
-  globalVar: GlobalVariable;
   public userID: string;
 
-  constructor(public auth: AngularFireAuth, public navCtrl: NavController, public router: Router, public alertController: AlertController, public toastController: ToastController, globalVar: GlobalVariable, public afs: AngularFirestore, ) {
+  constructor(public auth: AngularFireAuth, public navCtrl: NavController, public router: Router, public alertController: AlertController, public toastController: ToastController, public globalVar: GlobalVariable, public afs: AngularFirestore, ) {
     this.globalVar = globalVar;
    }
 

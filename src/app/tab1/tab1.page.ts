@@ -23,6 +23,8 @@ export class Tab1Page {
   public visitingShopID: string;
   public ticketID: string;
   public checkDate: string;
+  public totalQueue: number = 0;
+  public totalPeople: number = 0;
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, public popoverController: PopoverController, public afs: AngularFirestore, public globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
@@ -52,6 +54,43 @@ export class Tab1Page {
       resp.forEach(element => {
         this.visitingShopID = element.get('Shop_ID');
         this.globalVar.visitingShop = this.visitingShopID;
+        this.getQueueNumber(this.visitingShopID);
+        this.getTotalPeopleInShop(this.visitingShopID);
+      })
+    });
+  }
+
+  getTotalPeopleInShop(visitingShop: string) { //Get number of people in shop from db ///ADD CUSTOMER LOCATION HERE
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+      resp.forEach(element => {
+        if (element.data.length != 0) {
+          this.totalPeople = element.data.length;
+          this.addTotalNumberInShop(visitingShop, this.totalPeople);
+        }
+      })
+    });
+  }
+
+  addTotalNumberInShop(visitingShop: string, totalPeople: number) {
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('DependentRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Date', '==', this.checkDate)).get().subscribe(resp => {
+      resp.forEach(element => {
+        if (element.data.length != 0) {
+          totalPeople += element.data.length;
+          this.totalPeople = totalPeople;
+        }
+      })
+    });
+  }
+
+  getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+      resp.forEach(element => {
+        if (element.data.length != 0) {
+          this.totalQueue = element.data.length;
+        }
       })
     });
   }

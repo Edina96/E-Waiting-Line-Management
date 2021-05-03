@@ -5,6 +5,8 @@ import { PopoverController } from '@ionic/angular';
 import { GlobalVariable } from '../../global-variables';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { ToastController } from '@ionic/angular';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 interface DependentModel {
   name: string;
@@ -23,13 +25,13 @@ interface DependentModel {
 export class AddDependentPage implements OnInit {
 
   public dependentForm = {} as DependentModel;
-  globalVar: GlobalVariable;
   public authDependentID: string;
   myBoolean = false;
+  public shopID: string = '';
 
   // public favActive = false;
 
-  constructor(public navCtrl: NavController, public alertController: AlertController, public popoverController: PopoverController, globalVar: GlobalVariable, public afs: AngularFirestore, public toastController: ToastController) { this.globalVar = globalVar; }
+  constructor(public navCtrl: NavController, public alertController: AlertController, public popoverController: PopoverController, public globalVar: GlobalVariable, public afs: AngularFirestore, public toastController: ToastController) { this.globalVar = globalVar; }
 
   ngOnInit() {
   }
@@ -124,7 +126,8 @@ export class AddDependentPage implements OnInit {
     ).catch(
       (error) => alert("Please try again")
     )
-    this.addTemperatureToDB(this.globalVar.authUserID, dependentAuthID);
+    // this.addTemperatureToDB(this.globalVar.authUserID, dependentAuthID);
+    this.getShopID(dependentAuthID, )
   }
 
   async presentAlert() { //Alert box IC error
@@ -136,13 +139,24 @@ export class AddDependentPage implements OnInit {
     await alert.present();
   }
 
-  addTemperatureToDB(customerID: String, dependentID: string) {
+  getShopID(dependentAuthID: string) {
+    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.globalVar.ticketShopName)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.shopID = element.get('Shop_ID');
+        this.addTemperatureToDB(this.globalVar.authUserID, dependentAuthID, this.shopID);
+      })
+    });
+  }
+
+  addTemperatureToDB(customerID: String, dependentID: string, shopID: string) { //Add to DependentRecord
       const dependentRecordID = this.afs.createId();
       const value = {
         Customer_ID: customerID,
+        Date: new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString(),
         Dependent_ID: dependentID,
         Dependent_Record_ID: dependentRecordID,
-        Dependent_Temperature: this.dependentForm.temp
+        Dependent_Temperature: this.dependentForm.temp,
+        Shop_ID: shopID
       }
       this.afs.collection('DependentRecord').doc(dependentRecordID).set(value).then(
         () => {
@@ -153,5 +167,20 @@ export class AddDependentPage implements OnInit {
         (error) => alert("Please try again")
       )
   }
+
+  // getShopMaxCapacity() { //Display max capacity in page
+  //   this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID).where('Customer_WalkInDate', '==', new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString())).get().subscribe(resp => {
+  //     resp.forEach(resp2 => {
+  //       this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', resp2.get('Shop_ID'))).get().subscribe(resp3 => {
+  //         resp3.forEach(resp4 => {
+  //           if (this.globalVar.ticketShopName == resp4.get('Shop_Name')) {
+  //             this.maxCapacity = resp4.get('Max_Capacity');
+  //           }
+  //           this.getQueueNumber(resp2.get('Shop_ID'));
+  //         });
+  //       });
+  //     });
+  //   });
+  // }
 
 }

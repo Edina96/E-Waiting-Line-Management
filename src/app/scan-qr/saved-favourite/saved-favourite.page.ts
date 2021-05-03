@@ -3,6 +3,8 @@ import { NavController, AlertController } from '@ionic/angular';
 import { PopoverController } from '@ionic/angular';
 import { GlobalVariable } from '../../global-variables';
 import { AngularFirestore } from '@angular/fire/firestore';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 @Component({
   selector: 'app-saved-favourite',
@@ -20,6 +22,7 @@ export class SavedFavouritePage implements OnInit {
   values = [];
   public size: number;
   public checkedSize: number;
+  public shopID: string = '';
 
   constructor(public navCtrl: NavController, public alertController: AlertController, public popoverController: PopoverController, public afs: AngularFirestore, globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
@@ -84,13 +87,24 @@ export class SavedFavouritePage implements OnInit {
     });
   }
 
-  addTemperatureToDB(i: number) {
+  getShopID(i: number) {
+    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.globalVar.ticketShopName)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.shopID = element.get('Shop_ID');
+        this.addTemperatureToDB(i, this.shopID);
+      })
+    });
+  }
+
+  addTemperatureToDB(i: number, shopID: string) {
     const dependentRecordID = this.afs.createId();
     const values = {
       Customer_ID: this.globalVar.authUserID,
+      Date: new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString(),
       Dependent_ID: this.dependentID,
       Dependent_Record_ID: dependentRecordID,
-      Dependent_Temperature: this.values[i]
+      Dependent_Temperature: this.values[i],
+      Shop_ID: shopID
     } 
     this.afs.collection('DependentRecord').doc(dependentRecordID).set(values).then(
       () => {
@@ -110,7 +124,8 @@ export class SavedFavouritePage implements OnInit {
         this.afs.collection('Dependent', ref => ref.where('Dependent_Name', '==', this.checked[i])).get().subscribe(resp => {
           resp.forEach(element => {
             this.dependentID = element.get('Dependent_ID');
-            this.addTemperatureToDB(i);
+            // this.addTemperatureToDB(i);
+            this.getShopID(i);
           }) 
           console.log("Temp: " + this.values);
           this.infoSubmitted();

@@ -24,11 +24,18 @@ export class QueueInfoPage implements OnInit {
   public ticketID: string;
   public shopInfo: Observable<any[]>;
   public checkDate: string;
+  public maxCapacity: string;
+  public shopID: string = '';
+  public ticketInfoArray: any[] = [];
+  public currentArray: number[] = [];
+  public totalQueue: number = 0;
+  public totalPeople: number = 0;
+  public currentNumber: number = 0;
   scannedCode = null;
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, private barcodeScanner: BarcodeScanner, public afs: AngularFirestore, public globalVar: GlobalVariable) {
     this.globalVar = globalVar;
-    this.getShopMaxCapacity();
+    this.ticketInfoArray = this.globalVar.ticketInfoArray;
   }
 
   ngOnInit() {
@@ -36,6 +43,8 @@ export class QueueInfoPage implements OnInit {
     console.log(this.ticketShopID);
     this.updateShopImage();
     this.getTicketNumber();
+    this.getShopMaxCapacity();
+    this.getCurrentTicketNumber();
   }
 
   updateShopImage() {
@@ -43,16 +52,108 @@ export class QueueInfoPage implements OnInit {
       case 'H&M':
         this.ticketShopImageURL = '../../assets/h&mlogo.jpg';
         this.ticketShopName = 'H&M';
+        this.globalVar.ticketShopName = this.ticketShopName;
         break;
       case 'Sushi King':
         this.ticketShopImageURL = '../../assets/sushikinglogo.png';
         this.ticketShopName = 'Sushi King';
+        this.globalVar.ticketShopName = this.ticketShopName;
         break;
       case 'Watsons':
         this.ticketShopImageURL = '../../assets/watsonslogo.png';
         this.ticketShopName = 'Watsons';
+        this.globalVar.ticketShopName = this.ticketShopName;
         break;
     }
+  }
+
+  getCurrentTicketNumber() {
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.shopID = element.get('Shop_ID');
+        this.getQueueNumber(this.shopID);
+        this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', this.shopID).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+          resp.forEach(element => {
+            this.currentArray.push(element.get('Ticket_Number'));
+            this.currentNumber = Math.min.apply(Math, this.currentArray);
+            console.log("Current: " + Math.min.apply(Math, this.currentArray));
+          })
+        });
+      })
+    });
+  }
+
+  getTicketNumber() { //Display assigned ticket number in page
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+      resp.forEach(resp2 => {
+        this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', resp2.get('Shop_ID'))).get().subscribe(resp3 => {
+          resp3.forEach(resp4 => {
+            if (this.ticketShopName == resp4.get('Shop_Name') && resp2.get('Customer_WalkInDate') == this.checkDate) {
+              this.ticketNumber = resp2.get('Ticket_Number');
+            }
+          });
+        });
+      });
+    });
+  }
+
+  getShopMaxCapacity() { //Display max capacity in page
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+      resp.forEach(resp2 => {
+        this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', resp2.get('Shop_ID'))).get().subscribe(resp3 => {
+          resp3.forEach(resp4 => {
+            if (this.ticketShopName == resp4.get('Shop_Name')) {
+              this.maxCapacity = resp4.get('Max_Capacity');
+            }
+            this.getTotalPeopleInShop();
+            // this.getQueueNumber(resp2.get('Shop_ID'));
+          });
+        });
+      });
+    });
+  }
+
+  getTotalPeopleInShop() { //Get number of people in shop from db ///ADD CUSTOMER LOCATION HERE
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.shopID = element.get('Shop_ID');
+        this.getQueueNumber(this.shopID);
+        this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', this.shopID).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+          resp.forEach(element => {
+            if (element.data.length != 0) {
+              this.totalPeople = element.data.length;
+              this.addTotalNumberInShop(this.shopID, this.totalPeople);
+            }
+          })
+        });
+      })
+    });
+  }
+
+  addTotalNumberInShop(visitingShop: string, totalPeople: number) {
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('DependentRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Date', '==', this.checkDate)).get().subscribe(resp => {
+      resp.forEach(element => {
+        if (element.data.length != 0) {
+          totalPeople += element.data.length;
+          this.totalPeople = totalPeople;
+        }
+      })
+    });
+  }
+
+  getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
+    this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+      resp.forEach(element => {
+        if (element.data.length != 0) {
+          this.totalQueue = element.data.length;
+        }
+      })
+    });
   }
 
   async throwTicket() {
@@ -65,7 +166,7 @@ export class QueueInfoPage implements OnInit {
         {
           text: 'YES',
           handler: () => {
-            this.getTicketNumberFromDB();
+            this.getShopID();
             console.log("Ticket Canceled");
             this.navCtrl.navigateForward('/tabs/tab2');
           }
@@ -75,15 +176,23 @@ export class QueueInfoPage implements OnInit {
     await alert.present();
   }
 
-  getTicketNumberFromDB() { //From Ticket Collection
-    this.afs.collection('Ticket', ref => ref.where('Shop_ID', '==', this.globalVar.visitingShop)).get().subscribe(resp => {
+  getShopID() {
+    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.shopID = element.get('Shop_ID');
+        this.getTicketNumberFromDB(this.shopID);
+      })
+    });
+  }
+
+  getTicketNumberFromDB(ticketShopID: string) { //From Ticket Collection
+    this.afs.collection('Ticket', ref => ref.where('Shop_ID', '==', ticketShopID)).get().subscribe(resp => {
       resp.forEach(element => {
         this.ticketNumber = element.get('Total_Tickets');
         this.ticketID = element.get('Ticket_ID');
         this.ticketNumber -= 1;
-        console.log("Ticket Number DB: " + this.ticketNumber);
         this.updateTicketNumber(this.ticketNumber, this.ticketID);
-        this.getCustomerRecordID();
+        this.getCustomerRecordID(ticketShopID);
       })
     });
   }
@@ -102,33 +211,25 @@ export class QueueInfoPage implements OnInit {
     );
   }
 
-  getCustomerRecordID() {
+  getCustomerRecordID(ticketShopID: string) {
     var customerRecordID = "";
-    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
-      resp.forEach(element => {
-        if (element.get('Shop_ID') == this.globalVar.visitingShop && element.get('Customer_WalkInDate') == this.checkDate) {
-          customerRecordID = element.get('Customer_Record_ID');
-          this.afs.collection('CustomerRecord').doc(customerRecordID).delete();
-          this.globalVar.ticketInfoArray.splice(0, 2);
-        }
-      })
-    });
-  }
-
-  getTicketNumber() { //Display assigned ticket number in page
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
-      resp.forEach(element => {
-        if (element.get('Shop_ID') == this.globalVar.visitingShop && element.get('Customer_WalkInDate') == this.checkDate) {
-          this.ticketNumber = element.get('Ticket_Number');
-        }
-      })
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID).where('Shop_ID', '==', ticketShopID)).get().subscribe(resp => {
+      resp.forEach(resp2 => {
+        this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', ticketShopID)).get().subscribe(resp3 => {
+          resp3.forEach(resp4 => {
+            console.log("Ticket Shop Name: " + this.ticketShopName);
+            if (this.ticketShopName == resp4.get('Shop_Name') && resp2.get('Customer_WalkInDate') == this.checkDate) {
+              customerRecordID = resp2.get('Customer_Record_ID');
+              this.afs.collection('CustomerRecord').doc(customerRecordID).delete();
+              console.log(resp4.get('Shop_Name'));
+              this.ticketInfoArray.splice(this.ticketInfoArray.indexOf(resp4.get('Shop_Name')), 1);
+            }
+          });
+        });
+      });
+      return this.ticketInfoArray;
     });
-  }
-
-  getShopMaxCapacity() { //Display max capacity in page
-    this.shopInfo = this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', this.globalVar.visitingShop)).valueChanges();
-    console.log(this.shopInfo);
   }
 
   scanCode() {

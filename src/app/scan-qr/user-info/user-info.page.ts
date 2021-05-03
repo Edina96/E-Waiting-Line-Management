@@ -20,6 +20,7 @@ export class UserInfoPage implements OnInit {
   public userInfo: Observable<any[]>;
   public infoForm = {} as InfoModel;
   public recordID: string;
+  public shopID: string = '';
 
   constructor(public navCtrl: NavController, public alertController: AlertController, public afs: AngularFirestore, public globalVar: GlobalVariable) {
     this.globalVar = globalVar;
@@ -35,7 +36,8 @@ export class UserInfoPage implements OnInit {
     if (this.infoForm.temperature == null) {
       this.presentAlertPrompt();
     } else {
-      this.addTemperatureToDB(this.globalVar.authUserID);
+      // this.addTemperatureToDB(this.globalVar.authUserID);
+      this.getShopID();
       this.navCtrl.navigateForward('saved-favourite');
     }
   }
@@ -44,7 +46,8 @@ export class UserInfoPage implements OnInit {
     if (this.infoForm.temperature == null) {
       this.presentAlertPrompt();
     } else {
-      this.addTemperatureToDB(this.globalVar.authUserID);
+      // this.addTemperatureToDB(this.globalVar.authUserID);
+      this.getShopID();
       this.navCtrl.navigateForward('add-dependent');
     }
   }
@@ -53,7 +56,8 @@ export class UserInfoPage implements OnInit {
     if (this.infoForm.temperature == null) {
       this.presentAlertPrompt();
     } else {
-      this.addTemperatureToDB(this.globalVar.authUserID);
+      // this.addTemperatureToDB(this.globalVar.authUserID);
+      this.getShopID();
       const alert = await this.alertController.create({
         header: 'Success',
         subHeader: 'You have successfully check-in.',
@@ -76,14 +80,22 @@ export class UserInfoPage implements OnInit {
     console.log(this.userInfo);
   }
 
-  addTemperatureToDB(id: String) {
+  getShopID() {
+    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.globalVar.ticketShopName)).get().subscribe(resp => {
+      resp.forEach(element => {
+        this.shopID = element.get('Shop_ID');
+        this.addTemperatureToDB(this.globalVar.authUserID, this.shopID);
+      })
+    });
+  }
+
+  addTemperatureToDB(id: String, shopID: string) {
     const values = {
       Customer_Temperature: this.infoForm.temperature,
       Customer_WalkInDate: new Date(firebase.firestore.Timestamp.now().seconds*1000).toDateString(),
       Customer_WalkInTime: new Date(firebase.firestore.Timestamp.now().seconds*1000).toLocaleTimeString(),
-      Shop_ID: this.globalVar.visitingShop
     }
-    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID).where('Shop_ID', '==', shopID)).get().subscribe(resp => {
       resp.forEach(element => {
         this.recordID = element.get('Customer_Record_ID');
         this.afs.collection('CustomerRecord').doc(this.recordID).update(values).then(

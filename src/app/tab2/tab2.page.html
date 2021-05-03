@@ -23,8 +23,12 @@
 <ion-content [fullscreen]="true">
   <h3 class="ion-margin title">My Ticket</h3>
 
-  <div >
-  <ion-card class="ion-margin" [routerLink]="['/queue-info']" routerLinkActive="router-link-active" [state]="{id: ticketShopName, data: 'H&M'}" *ngFor="let ticket of ticketInfoArray">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngFor="let ticket of ticketInfoArray">
+  <ion-card class="ion-margin" [routerLink]="['/queue-info']" routerLinkActive="router-link-active" [state]="{id: ticketShopName, data: ticket.shopName }">
     <ion-grid>
       <ion-row class="ion-align-items-center">
         <ion-col>

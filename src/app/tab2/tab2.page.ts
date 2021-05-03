@@ -15,18 +15,17 @@ import 'firebase/firestore';
 })
 export class Tab2Page {
 
-  // shopImgURL: any;
   public checkDate: string;
   public shopID: string;
   public shopName: string;
-  public ticketInfoArray = [];
+  public ticketInfoArray: any[] = [];
 
   constructor(public navCtrl: NavController, public popoverController: PopoverController, public router: Router, public globalVar: GlobalVariable, public afs: AngularFirestore) {
     this.globalVar = globalVar;
+    this.ticketInfoArray = this.globalVar.ticketInfoArray;
   }
 
   ngOnInit() {
-    this.ticketInfoArray = this.globalVar.ticketInfoArray;
     this.getCustomerRecordID();
   }
 
@@ -34,12 +33,22 @@ export class Tab2Page {
     this.navCtrl.navigateForward('shopSelection');
   }
 
+  doRefresh(event) { //Refresh page
+    this.getCustomerRecordID();
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 1000);
+  }
+
   getCustomerRecordID() {
     var customerRecordID = "";
+    this.ticketInfoArray.splice(0, this.ticketInfoArray.length);
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
       resp.forEach(element => {
-        if (element.get('Shop_ID') == this.globalVar.visitingShop && element.get('Customer_WalkInDate') == this.checkDate) {
+        if (element.get('Customer_WalkInDate') == this.checkDate) {
           customerRecordID = element.get('Customer_Record_ID');
           this.shopID = element.get('Shop_ID');
           console.log(customerRecordID);
@@ -54,23 +63,29 @@ export class Tab2Page {
       resp.forEach(resp2 => {
         this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', resp2.get('Shop_ID'))).get().subscribe(resp3 => {
           resp3.forEach(resp4 => {
-            if (resp4.get('Shop_Name') == "H&M") {
-              this.globalVar.ticketInfoArray.push({
-                ticketNumber: resp2.get('Ticket_Number'),
-                shopImage: '../../assets/h&mlogo.jpg'
-              });
-            } else if (resp4.get('Shop_Name') == "Sushi King") {
-              this.globalVar.ticketInfoArray.push({
-                ticketNumber: resp2.get('Ticket_Number'),
-                shopImage: '../../assets/sushikinglogo.png'
-              });
-            } else {
-              this.globalVar.ticketInfoArray.push({
-                ticketNumber: resp2.get('Ticket_Number'),
-                shopImage: '../../assets/watsonslogo.png'
-              });
+            switch (resp4.get('Shop_Name')) {
+              case 'H&M':
+                this.globalVar.ticketInfoArray.push({
+                  shopName: 'H&M',
+                  ticketNumber: resp2.get('Ticket_Number'),
+                  shopImage: '../../assets/h&mlogo.jpg'
+                });
+                break;
+              case 'Sushi King':
+                this.globalVar.ticketInfoArray.push({
+                  shopName: 'Sushi King',
+                  ticketNumber: resp2.get('Ticket_Number'),
+                  shopImage: '../../assets/sushikinglogo.png'
+                });
+                break;
+              case 'Watsons':
+                this.globalVar.ticketInfoArray.push({
+                  shopName: 'Watsons',
+                  ticketNumber: resp2.get('Ticket_Number'),
+                  shopImage: '../../assets/watsonslogo.png'
+                });
+                break;
             }
-            console.log(this.globalVar.ticketInfoArray);
           });
         });
       });
