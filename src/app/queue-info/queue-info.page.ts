@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { GlobalVariable } from '../global-variables';
+import { ToastController } from '@ionic/angular';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Observable } from 'rxjs';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -31,9 +32,11 @@ export class QueueInfoPage implements OnInit {
   public totalQueue: number = 0;
   public totalPeople: number = 0;
   public currentNumber: number = 0;
+  public array: any[] = [];
+  public arrayLength = 0;
   scannedCode = null;
 
-  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, private barcodeScanner: BarcodeScanner, public afs: AngularFirestore, public globalVar: GlobalVariable) {
+  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, public afs: AngularFirestore, public globalVar: GlobalVariable, public toastController: ToastController, private geolocation: Geolocation) {
     this.globalVar = globalVar;
     this.ticketInfoArray = this.globalVar.ticketInfoArray;
   }
@@ -120,7 +123,6 @@ export class QueueInfoPage implements OnInit {
     this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe(resp => {
       resp.forEach(element => {
         this.shopID = element.get('Shop_ID');
-        this.getQueueNumber(this.shopID);
         this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', this.shopID).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
           resp.forEach(element => {
             if (element.data.length != 0) {
@@ -129,6 +131,7 @@ export class QueueInfoPage implements OnInit {
             }
           })
         });
+        this.getQueueNumber(this.shopID);
       })
     });
   }
@@ -147,13 +150,18 @@ export class QueueInfoPage implements OnInit {
 
   getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
-      resp.forEach(element => {
-        if (element.data.length != 0) {
-          this.totalQueue = element.data.length;
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
+      resp2.forEach(element2 => {
+        if (element2.get('Shop_ID') == visitingShop) {
+          console.log(element2.data.length);
+          this.array.push ({
+            element2
+          });
         }
       })
-    });
+    })
+    this.arrayLength = this.array.length;
+    console.log(this.arrayLength);
   }
 
   async throwTicket() {
@@ -233,37 +241,71 @@ export class QueueInfoPage implements OnInit {
   }
 
   scanCode() {
-    // this.barcodeScanner.scan().then(barcodeData =>{
-    //   this.scannedCode = barcodeData.text;
-    //}
+    const ionApp = <HTMLElement>document.getElementsByTagName('ion-app')[0];
+    //Optionally request the permission early
+    this.qrScanner.prepare()
+      .then(async (status: QRScannerStatus) => {
+        if (status.authorized) {
+          // camera permission was granted
+          var camtoast = await this.toastController.create({
+            message: 'camera permission granted',
+            duration: 1000
+          });
+          camtoast.present();
 
-    // Optionally request the permission early
-    // this.qrScanner.prepare()
-    //   .then((status: QRScannerStatus) => {
-    //     if (status.authorized) {
-    //       // camera permission was granted
-    //       // start scanning
-    //       let scanSub = this.qrScanner.scan().subscribe((text: string) => {
-    //         console.log('Scanned something', text);
-    //         this.qrScanner.hide(); // hide camera preview
-    //         scanSub.unsubscribe(); // stop scanning
-    //       });
+          this.qrScanner.show();
+          // this.qrScanner.resumePreview();
+          window.document.querySelector('ion-app').classList.add('transparentBody');
+          ionApp.style.display = 'none';
 
-    //     } else if (status.denied) {
-    //       // camera permission was permanently denied
-    //       // you must use QRScanner.openSettings() method to guide the user to the settings page
-    //       // then they can grant the permission from there
-    //     } else {
-    //       // permission was denied, but not permanently. You can ask for permission again at a later time.
-    //     }
-    //   })
-    //   .catch((e: any) => console.log('Error is', e));
+          // start scanning
+          let scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
+            alert('Scanned something' + text);
+            this.qrScanner.hide(); // hide camera preview
+            window.document.querySelector('ion-app').classList.remove('transparentBody');
+            const toast = await this.toastController.create({
+              message: 'You scanned text is this :' + text,
+              duration: 6000
+            });
+            toast.present();
+            scanSub.unsubscribe(); // stop scanning
+            ionApp.style.display = 'block';
+          });
+        } else if (status.denied) {
+          // camera permission was permanently denied
+          // you must use QRScanner.openSettings() method to guide the user to the settings page
+          // then they can grant the permission from there
+          this.qrScanner.openSettings();
+          alert('request permission');
+        }
+      })
+      .catch((e: any) => alert('Error is' + e));
+    
+    this.getLocation();
+  }
 
-    //   //testing
-    //   console.log("scanned");
+  getLocation() {
+    var lat = 0;
+    var long = 0;
+    this.geolocation.getCurrentPosition().then((resp) => {
+      alert('Latitude: ' + resp.coords.latitude + ' Longitude: ' + resp.coords.longitude);
+      lat = resp.coords.latitude;
+      long = resp.coords.longitude;
+      // resp.coords.latitude
+      // resp.coords.longitude
+    }).catch((error) => {
+      console.log('Error getting location', error);
+    });
 
-    //   this.navCtrl.navigateForward("user-info");
-    //Testing
+    let watch = this.geolocation.watchPosition();
+    watch.subscribe((data) => {
+      // data can be a set of coordinates, or an error (if an error occurred).
+      // data.coords.latitude
+      // data.coords.longitude
+      alert('Latitude: ' + lat + ' Longitude: ' + long);
+    });
+
     this.navCtrl.navigateForward("user-info");
   }
+
 }

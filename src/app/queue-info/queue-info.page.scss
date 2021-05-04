@@ -32,6 +32,10 @@
   }
 }
 
+.transparentBody, ion-app.transparentBody, ion-app.transparentBody ion-content, ion-app.transparentBody .nav-decor {
+  background: transparent none !important;
+}
+
 //iPad size
 @media screen and (device-aspect-ratio: 3/4) {
   .title {

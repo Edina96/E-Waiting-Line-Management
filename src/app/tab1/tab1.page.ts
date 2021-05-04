@@ -25,7 +25,12 @@ export class Tab1Page {
   public checkDate: string;
   public totalQueue: number = 0;
   public totalPeople: number = 0;
-  public currentTotalTicket: number =0;
+
+  public currentTotalTicket: number = 0;
+
+  public array: any[] = [];
+  public arrayLength = 0;
+
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, public popoverController: PopoverController, public afs: AngularFirestore, public globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
@@ -48,6 +53,15 @@ export class Tab1Page {
         break;
     }
     this.getShopID();
+  }
+
+  doRefresh(event) { //Refresh page
+    this.getShopID();
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 1000);
   }
 
   getShopID() { //Get ID of visiting shop
@@ -88,13 +102,18 @@ export class Tab1Page {
 
   getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
-      resp.forEach(element => {
-        if (element.data.length != 0) {
-          this.totalQueue = element.data.length;
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
+      resp2.forEach(element2 => {
+        if (element2.get('Shop_ID') == visitingShop) {
+          console.log(element2.data.length);
+          this.array.push ({
+            element2
+          });
         }
       })
-    });
+    })
+    this.arrayLength = this.array.length;
+    console.log(this.arrayLength);
   }
 
   async showTicket(ticketNumber: number) {

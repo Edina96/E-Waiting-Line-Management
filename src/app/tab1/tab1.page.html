@@ -21,11 +21,16 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  
   <img [src]="shopImageURL" alt="Shop Logo" class="logo">
   <p class="title">Number of People In Shop:</p>
   <p class="number">{{ totalPeople }}</p>
   <p class="title">Number of People In Queue:</p>
-  <p class="number">{{ totalQueue }}</p>
+  <p class="number">{{ arrayLength }}</p>
 
   <div class="btn ion-margin">
     <ion-button color="medium" size="medium" expand="block" (click)="getTicketNumberFromDB()">Take E-Ticket</ion-button>
