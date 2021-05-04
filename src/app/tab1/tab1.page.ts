@@ -25,6 +25,7 @@ export class Tab1Page {
   public checkDate: string;
   public totalQueue: number = 0;
   public totalPeople: number = 0;
+  public currentTotalTicket: number =0;
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, public popoverController: PopoverController, public afs: AngularFirestore, public globalVar: GlobalVariable) { this.globalVar = globalVar; }
 
@@ -83,6 +84,7 @@ export class Tab1Page {
       })
     });
   }
+  
 
   getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
@@ -123,10 +125,21 @@ export class Tab1Page {
         this.ticketNumber = element.get('Total_Tickets');
         this.ticketID = element.get('Ticket_ID');
         this.ticketNumber += 1;
+        this.currentTotalTicket+=1;
+        console.log("current total" + this.currentTotalTicket);
+        if(this.currentTotalTicket==2){
+          alert("you can only get one ticket per shop");
+          this.navCtrl.navigateBack('shopSelection');
+          console.log("before:"+ this.currentTotalTicket);
+          this.currentTotalTicket==2;
+          console.log("after:"+ this.currentTotalTicket);
+        }
+        else{
         console.log("Ticket Number DB: " + this.ticketNumber);
         this.updateTicketNumber(this.ticketNumber, this.ticketID);
         this.storeTicketNumber(this.ticketNumber);
         this.showTicket(this.ticketNumber);
+        }
       })
     });
   }
