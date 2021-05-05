@@ -75,34 +75,39 @@ export class Tab1Page {
     });
   }
 
-  getTotalPeopleInShop(visitingShop: string) { //Get number of people in shop from db ///ADD CUSTOMER LOCATION HERE
+  getTotalPeopleInShop(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
-      resp.forEach(element => {
-        if (element.data.length != 0) {
-          this.totalPeople = element.data.length;
-          this.addTotalNumberInShop(visitingShop, this.totalPeople);
+    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe(resp2 => {
+      resp2.forEach(element2 => {
+        if ((element2.get('Customer_WalkInDate') == this.checkDate) && (element2.get('Customer_Temperature') != null)) {
+          if (element2.data.length != 0) {
+            this.totalPeople = element2.data.length;
+            this.addTotalNumberInShop(visitingShop, this.totalPeople);
+          }
         }
       })
-    });
+    })
   }
 
   addTotalNumberInShop(visitingShop: string, totalPeople: number) {
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-    this.afs.collection('DependentRecord', ref => ref.where('Shop_ID', '==', visitingShop).where('Date', '==', this.checkDate)).get().subscribe(resp => {
-      resp.forEach(element => {
-        if (element.data.length != 0) {
-          totalPeople += element.data.length;
-          this.totalPeople = totalPeople;
+    this.afs.collection('DependentRecord', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe(resp2 => {
+      resp2.forEach(element2 => {
+        if ((element2.get('Date') == this.checkDate) && (element2.get('Dependent_Temperature') != null)) {
+          if (element2.data.length != 0) {
+            totalPeople += element2.data.length;
+            this.totalPeople = totalPeople;
+          }
         }
       })
-    });
+    })
+    console.log(this.totalPeople);
   }
-  
 
   getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
+      this.array.splice(0, this.array.length);
       resp2.forEach(element2 => {
         if (element2.get('Shop_ID') == visitingShop) {
           console.log(element2.data.length);
