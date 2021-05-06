@@ -75,18 +75,66 @@ export class Tab1Page {
     });
   }
 
-  getTotalPeopleInShop(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
+  // getTotalPeopleInShop(visitingShop: string) { //Get number of people in shop from db
+  //   this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+  //   this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+  //     this.array.splice(0, this.array.length);
+  //     resp.forEach(resp2 => {
+  //       this.afs.collection('Customer', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp3 => {
+  //         resp3.forEach(resp4 => {
+  //           this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe
+  //             (resp5 => {
+  //               console.log("Geolocation Resp 4: " + resp4.get('Geolocation').toString());
+  //               resp5.forEach(resp6 => {
+  //                 console.log("Geolocation Resp 6: " + resp6.get('Shop_Geolocation').toString());
+  //                 if ((resp2.get('Customer_Temperature') != null) && (resp4.get('Geolocation').toString() == resp6.get('Shop_Geolocation').toString())) {
+  //                   if (resp2.data.length != 0) {
+  //                     this.totalPeople = resp2.data.length;
+  //                     this.addTotalNumberInShop(visitingShop, this.totalPeople);
+  //                   }
+  //                 }
+  //               })
+  //             });
+  //         })
+  //       });
+  //     });
+  //   });
+  //   console.log("Array: " + this.array);
+  //   this.arrayLength = this.array.length;
+  //   console.log("Array Length: " + this.arrayLength);
+  // }
+
+  getTotalPeopleInShop(visitingShop: string) { //Get number of people in shop from db
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-    this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe(resp2 => {
-      resp2.forEach(element2 => {
-        if ((element2.get('Customer_WalkInDate') == this.checkDate) && (element2.get('Customer_Temperature') != null)) {
-          if (element2.data.length != 0) {
-            this.totalPeople = element2.data.length;
-            this.addTotalNumberInShop(visitingShop, this.totalPeople);
-          }
-        }
-      })
-    })
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+      this.array.splice(0, this.array.length);
+      resp.forEach(resp2 => {
+        this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe(resp3 => {
+          resp3.forEach(resp4 => {
+            this.afs.collection('Customer', ref => ref.where('Geolocation', '!=', null)).get().subscribe
+              (resp5 => {
+                resp5.forEach(resp6 => {
+                  console.log("Geolocation Resp 4 Shop: " + resp4.get('Shop_Geolocation').toString());
+                  if ((resp2.get('Customer_Temperature') != null) && (resp6.get('Geolocation') != null)) {
+                    console.log("Geolocation Resp 6 Customer: " + resp6.get('Geolocation').toString());
+                    if ((resp6.get('Geolocation').toString() == resp4.get('Shop_Geolocation').toString())) {
+                      console.log("aaa");
+                      if (resp2.data.length != 0) {
+                        console.log("Resp2 Length: " + resp2.data.length);
+                        this.totalPeople = resp2.data.length;
+                        this.addTotalNumberInShop(visitingShop, this.totalPeople);
+                      }
+                    }
+                  }
+                })
+              });
+          })
+        });
+      });
+    });
+    console.log("Array: " + this.array);
+    this.arrayLength = this.array.length;
+    console.log("Array Length: " + this.arrayLength);
   }
 
   addTotalNumberInShop(visitingShop: string, totalPeople: number) {
@@ -105,20 +153,20 @@ export class Tab1Page {
   }
 
   getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
+    console.log("Get Queue")
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
       this.array.splice(0, this.array.length);
       resp2.forEach(element2 => {
-        if (element2.get('Shop_ID') == visitingShop) {
-          console.log(element2.data.length);
-          this.array.push ({
+        if ((element2.get('Shop_ID') == visitingShop) && (element2.get('Customer_Temperature') == null)) {
+          this.array.push({
             element2
           });
+          this.arrayLength = this.array.length;
+          console.log("Tab 1 Array Length: " + this.arrayLength);
         }
       })
     })
-    this.arrayLength = this.array.length;
-    console.log(this.arrayLength);
   }
 
   async showTicket(ticketNumber: number) {
@@ -149,20 +197,20 @@ export class Tab1Page {
         this.ticketNumber = element.get('Total_Tickets');
         this.ticketID = element.get('Ticket_ID');
         this.ticketNumber += 1;
-        this.currentTotalTicket+=1;
+        this.currentTotalTicket += 1;
         console.log("current total" + this.currentTotalTicket);
-        if(this.currentTotalTicket==2){
+        if (this.currentTotalTicket == 2) {
           alert("you can only get one ticket per shop");
           this.navCtrl.navigateBack('shopSelection');
-          console.log("before:"+ this.currentTotalTicket);
-          this.currentTotalTicket==2;
-          console.log("after:"+ this.currentTotalTicket);
+          console.log("before:" + this.currentTotalTicket);
+          this.currentTotalTicket == 2;
+          console.log("after:" + this.currentTotalTicket);
         }
-        else{
-        console.log("Ticket Number DB: " + this.ticketNumber);
-        this.updateTicketNumber(this.ticketNumber, this.ticketID);
-        this.storeTicketNumber(this.ticketNumber);
-        this.showTicket(this.ticketNumber);
+        else {
+          console.log("Ticket Number DB: " + this.ticketNumber);
+          this.updateTicketNumber(this.ticketNumber, this.ticketID);
+          this.storeTicketNumber(this.ticketNumber);
+          this.showTicket(this.ticketNumber);
         }
       })
     });

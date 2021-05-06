@@ -6,10 +6,11 @@ import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { GlobalVariable } from '../global-variables';
 import { ToastController } from '@ionic/angular';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Geolocation, Geoposition, PositionError } from '@ionic-native/geolocation/ngx';
 import { Observable } from 'rxjs';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 @Component({
   selector: 'app-queue-info',
@@ -29,14 +30,15 @@ export class QueueInfoPage implements OnInit {
   public shopID: string = '';
   public ticketInfoArray: any[] = [];
   public currentArray: number[] = [];
-  public totalQueue: number = 0;
   public totalPeople: number = 0;
   public currentNumber: number = 0;
   public array: any[] = [];
   public arrayLength = 0;
+  public latitude = 0;
+  public longitude = 0;
   scannedCode = null;
 
-  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, public afs: AngularFirestore, public globalVar: GlobalVariable, public toastController: ToastController, private geolocation: Geolocation) {
+  constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, public afs: AngularFirestore, public globalVar: GlobalVariable, public toastController: ToastController, private geolocation: Geolocation, private localNotifications: LocalNotifications) {
     this.globalVar = globalVar;
     this.ticketInfoArray = this.globalVar.ticketInfoArray;
   }
@@ -45,7 +47,7 @@ export class QueueInfoPage implements OnInit {
     this.ticketShopID = this.router.getCurrentNavigation().extras.state.data;
     console.log(this.ticketShopID);
     this.updateShopImage();
-    this.getTicketNumber();
+    // this.getTicketNumber();
     this.getShopMaxCapacity();
     this.getCurrentTicketNumber();
   }
@@ -71,6 +73,7 @@ export class QueueInfoPage implements OnInit {
   }
 
   getCurrentTicketNumber() {
+    var current = 0;
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe(resp => {
       resp.forEach(element => {
@@ -79,15 +82,18 @@ export class QueueInfoPage implements OnInit {
         this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', this.shopID).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
           resp.forEach(element => {
             this.currentArray.push(element.get('Ticket_Number'));
-            this.currentNumber = Math.min.apply(Math, this.currentArray);
+            current = Math.min.apply(Math, this.currentArray);
+            this.currentNumber = current;
+            // this.currentNumber = Math.min.apply(Math, this.currentArray);
             console.log("Current: " + Math.min.apply(Math, this.currentArray));
+            this.getTicketNumber(this.currentNumber);
           })
         });
       })
     });
   }
 
-  getTicketNumber() { //Display assigned ticket number in page
+  getTicketNumber(currentNumber: number) { //Display assigned ticket number in page
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp => {
       resp.forEach(resp2 => {
@@ -95,6 +101,7 @@ export class QueueInfoPage implements OnInit {
           resp3.forEach(resp4 => {
             if (this.ticketShopName == resp4.get('Shop_Name') && resp2.get('Customer_WalkInDate') == this.checkDate) {
               this.ticketNumber = resp2.get('Ticket_Number');
+              this.sendNotification(this.ticketNumber, currentNumber);
             }
           });
         });
@@ -157,7 +164,7 @@ export class QueueInfoPage implements OnInit {
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
       resp2.forEach(element2 => {
-        if (element2.get('Shop_ID') == visitingShop) {
+        if ((element2.get('Shop_ID') == visitingShop) && (element2.get('Customer_Temperature') == null)) {
           console.log(element2.data.length);
           this.array.push({
             element2
@@ -290,27 +297,64 @@ export class QueueInfoPage implements OnInit {
   }
 
   getLocation() {
-    var lat = 0;
-    var long = 0;
     this.geolocation.getCurrentPosition().then((resp) => {
       alert('Latitude: ' + resp.coords.latitude + ' Longitude: ' + resp.coords.longitude);
-      lat = resp.coords.latitude;
-      long = resp.coords.longitude;
-      // resp.coords.latitude
-      // resp.coords.longitude
+      this.latitude = resp.coords.latitude;
+      this.longitude = resp.coords.longitude;
+      const value = {
+        Geolocation: [this.latitude, this.longitude]
+      }
+      this.afs.collection('Customer').doc(this.globalVar.authUserID).update(value).then(
+        () => {
+          console.log("Successfully added to Database.")
+        },
+        (error) => alert("An error occurred")
+      ).catch(
+        (error) => alert("Please try again")
+      );
     }).catch((error) => {
       console.log('Error getting location', error);
     });
 
-    let watch = this.geolocation.watchPosition();
+    let watch = this.geolocation.watchPosition(); //To keep track of changes in devices' location
     watch.subscribe((data) => {
       // data can be a set of coordinates, or an error (if an error occurred).
       // data.coords.latitude
       // data.coords.longitude
-      alert('Latitude: ' + lat + ' Longitude: ' + long);
+      if ((data as Geoposition).coords != undefined) {
+        var geoposition = (data as Geoposition);
+        console.log('Latitude: ' + geoposition.coords.latitude + ' Longitude: ' + geoposition.coords.longitude)
+        const value = {
+          Geolocation: [geoposition.coords.latitude, geoposition.coords.longitude]
+        } ///UNCOMMENT!!!
+        // this.afs.collection('Customer').doc(this.globalVar.authUserID).update(value).then(
+        //   () => {
+        //     console.log("Successfully added to Database.")
+        //   },
+        //   (error) => alert("An error occurred")
+        // ).catch(
+        //   (error) => alert("Please try again")
+        // );
+      } else {
+        var positionError = (data as PositionError);
+        console.log('Error ' + positionError.code + ': ' + positionError.message);
+      }
     });
-
     this.navCtrl.navigateForward("user-info");
+  }
+
+  sendNotification(ticketNumber: number, currentNumber: number) {
+    if ((ticketNumber - 1) == currentNumber) {
+      // Schedule a single notification
+      this.localNotifications.schedule({
+        id: 1,
+        title: 'Your Turn is reaching',
+        text: 'Please proceed to the counter',
+        data: { secret: 'key' },
+        vibrate: true,
+        foreground: true
+      });
+    }
   }
 
 }

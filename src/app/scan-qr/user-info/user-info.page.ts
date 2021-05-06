@@ -97,7 +97,8 @@ export class UserInfoPage implements OnInit {
     }
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID).where('Shop_ID', '==', shopID)).get().subscribe(resp => {
       resp.forEach(element => {
-        this.recordID = element.get('Customer_Record_ID');
+        if (element.get('Customer_WalkInDate') != null) {
+          this.recordID = element.get('Customer_Record_ID');
         this.afs.collection('CustomerRecord').doc(this.recordID).update(values).then(
           () => {
             console.log("Successfully added to Database.")
@@ -106,6 +107,7 @@ export class UserInfoPage implements OnInit {
         ).catch(
           (error) => alert("Please try again")
         );
+        }
       }) 
     });
   }

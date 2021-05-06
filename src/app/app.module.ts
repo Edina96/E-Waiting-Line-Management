@@ -16,6 +16,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth'
 import { environment } from 'src/environments/environment';
 import { GlobalVariable } from './global-variables';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 @NgModule({
   declarations: [AppComponent, LogoutComponent],
@@ -33,7 +34,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
   },
     QRScanner,
     GlobalVariable,
-    Geolocation],
+    Geolocation,
+    LocalNotifications],
 
   bootstrap: [AppComponent],
 })
