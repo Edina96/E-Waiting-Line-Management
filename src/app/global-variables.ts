@@ -6,4 +6,5 @@ export class GlobalVariable {
     visitingShop: string = '';
     ticketInfoArray: any[] = [];
     ticketShopName: string = '';
+    notificationArray: any[] = [];
 }

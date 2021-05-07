@@ -70,6 +70,7 @@ export class Tab2Page {
           resp3.forEach(resp4 => {
             this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', resp2.get('Shop_ID')).where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
               resp.forEach(element => {
+                if (element.get('Customer_WalkInDate') == this.checkDate)
                 currentarray.push(element.get('Ticket_Number'));
                 this.currentArray = currentarray;
               })
@@ -84,7 +85,17 @@ export class Tab2Page {
                     shopImage: '../../assets/h&mlogo.jpg',
                     current: this.currentNumber
                   });
-                  // this.sendNotification(this.globalVar.ticketInfoArray.find({ticketNumber}), this.globalVar.ticketInfoArray.find({current}))
+
+                  for (let i in this.globalVar.ticketInfoArray) {
+                    let tickets = []; 
+                    for (let j in this.globalVar.ticketInfoArray[i]) {
+                      tickets.push(this.globalVar.ticketInfoArray[i][j]);
+                    }
+                    console.log("Tickets array tab 2: ", tickets[1]);
+                    console.log("Tickets array tab 2: ", tickets[3]);
+                    this.sendNotification(tickets[1], tickets[3]);
+                  }
+
                   break;
                 case 'Sushi King':
                   this.globalVar.ticketInfoArray.push({
@@ -93,6 +104,17 @@ export class Tab2Page {
                     shopImage: '../../assets/sushikinglogo.png',
                     current: this.currentNumber
                   });
+
+                  for (let i in this.globalVar.ticketInfoArray) {
+                    let tickets = [];
+                    for (let j in this.globalVar.ticketInfoArray[i]) {
+                      tickets.push(this.globalVar.ticketInfoArray[i][j]);
+                    }
+                    console.log("Tickets array tab 2: ", tickets[1]);
+                    console.log("Tickets array tab 2: ", tickets[3]);
+                    this.sendNotification(tickets[1], tickets[3]);
+                  }
+
                   break;
                 case 'Watsons':
                   this.globalVar.ticketInfoArray.push({
@@ -101,6 +123,17 @@ export class Tab2Page {
                     shopImage: '../../assets/watsonslogo.png',
                     current: this.currentNumber
                   });
+
+                  for (let i in this.globalVar.ticketInfoArray) {
+                    let tickets = [];
+                    for (let j in this.globalVar.ticketInfoArray[i]) {
+                      tickets.push(this.globalVar.ticketInfoArray[i][j]);
+                    }
+                    console.log("Tickets array tab 2: ", tickets[1]);
+                    console.log("Tickets array tab 2: ", tickets[3]);
+                    this.sendNotification(tickets[1], tickets[3]);
+                  }
+
                   break;
               }
             });
@@ -121,7 +154,11 @@ export class Tab2Page {
         vibrate: true,
         foreground: true
       });
+      console.log("X");
     }
+    this.globalVar.notificationArray.push({
+      Time: new Date(firebase.firestore.Timestamp.now().seconds*1000).toLocaleTimeString()
+    });
   }
 
   async logout(ev: any) {

@@ -36,7 +36,6 @@ export class QueueInfoPage implements OnInit {
   public arrayLength = 0;
   public latitude = 0;
   public longitude = 0;
-  scannedCode = null;
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, public afs: AngularFirestore, public globalVar: GlobalVariable, public toastController: ToastController, private geolocation: Geolocation, private localNotifications: LocalNotifications) {
     this.globalVar = globalVar;
@@ -47,7 +46,6 @@ export class QueueInfoPage implements OnInit {
     this.ticketShopID = this.router.getCurrentNavigation().extras.state.data;
     console.log(this.ticketShopID);
     this.updateShopImage();
-    // this.getTicketNumber();
     this.getShopMaxCapacity();
     this.getCurrentTicketNumber();
   }
@@ -84,7 +82,6 @@ export class QueueInfoPage implements OnInit {
             this.currentArray.push(element.get('Ticket_Number'));
             current = Math.min.apply(Math, this.currentArray);
             this.currentNumber = current;
-            // this.currentNumber = Math.min.apply(Math, this.currentArray);
             console.log("Current: " + Math.min.apply(Math, this.currentArray));
             this.getTicketNumber(this.currentNumber);
           })
@@ -118,14 +115,13 @@ export class QueueInfoPage implements OnInit {
               this.maxCapacity = resp4.get('Max_Capacity');
             }
             this.getTotalPeopleInShop();
-            // this.getQueueNumber(resp2.get('Shop_ID'));
           });
         });
       });
     });
   }
 
-  getTotalPeopleInShop() { //Get number of people in shop from db ///ADD CUSTOMER LOCATION HERE
+  getTotalPeopleInShop() { //Get number of people in shop from db
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe(resp2 => {
       resp2.forEach(element => {
@@ -160,7 +156,7 @@ export class QueueInfoPage implements OnInit {
     console.log(this.totalPeople);
   }
 
-  getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
+  getQueueNumber(visitingShop: string) { //Get number of people in queue from db
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
       resp2.forEach(element2 => {
@@ -327,14 +323,14 @@ export class QueueInfoPage implements OnInit {
         const value = {
           Geolocation: [geoposition.coords.latitude, geoposition.coords.longitude]
         } ///UNCOMMENT!!!
-        // this.afs.collection('Customer').doc(this.globalVar.authUserID).update(value).then(
-        //   () => {
-        //     console.log("Successfully added to Database.")
-        //   },
-        //   (error) => alert("An error occurred")
-        // ).catch(
-        //   (error) => alert("Please try again")
-        // );
+        this.afs.collection('Customer').doc(this.globalVar.authUserID).update(value).then(
+          () => {
+            console.log("Successfully added to Database.")
+          },
+          (error) => alert("An error occurred")
+        ).catch(
+          (error) => alert("Please try again")
+        );
       } else {
         var positionError = (data as PositionError);
         console.log('Error ' + positionError.code + ': ' + positionError.message);
@@ -349,6 +345,17 @@ export class QueueInfoPage implements OnInit {
       this.localNotifications.schedule({
         id: 1,
         title: 'Your Turn is reaching',
+        text: 'Please proceed to the counter',
+        data: { secret: 'key' },
+        vibrate: true,
+        foreground: true
+      });
+    }
+    if (ticketNumber == currentNumber) {
+      // Schedule a single notification
+      this.localNotifications.schedule({
+        id: 1,
+        title: 'Its your turn',
         text: 'Please proceed to the counter',
         data: { secret: 'key' },
         vibrate: true,

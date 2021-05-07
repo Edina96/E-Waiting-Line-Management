@@ -52,10 +52,43 @@ export class UserInfoPage implements OnInit {
     }
   }
 
+  // async infoSubmitted() {
+  //   if (this.infoForm.temperature == null) {
+  //     this.presentAlertPrompt();
+  //   } else {
+  //     // this.addTemperatureToDB(this.globalVar.authUserID);
+  //     this.getShopID();
+  //     const alert = await this.alertController.create({
+  //       header: 'Success',
+  //       subHeader: 'You have successfully check-in.',
+  //       message: `Please take note that the app has recorded your geolocation details for the purpose of automating check-out.`,
+  //       buttons: [
+  //         {
+  //           text: 'OK',
+  //           handler: () => {
+  //             this.navCtrl.navigateForward('queue-info');
+  //           }
+  //         }
+  //       ]
+  //     });
+  //     await alert.present();
+  //   }
+  // }
+
   async infoSubmitted() {
     if (this.infoForm.temperature == null) {
       this.presentAlertPrompt();
-    } else {
+    } else if (this.infoForm.temperature === "37.8" || this.infoForm.temperature > "37.8") {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        subHeader: 'Your Body Temperature is too HIGH. Please contact shop assistants for further assistance.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      this.navCtrl.navigateBack('/tabs/tab1');
+    }
+    //this.presentAlertPrompt();
+    else {
       // this.addTemperatureToDB(this.globalVar.authUserID);
       this.getShopID();
       const alert = await this.alertController.create({
@@ -92,23 +125,23 @@ export class UserInfoPage implements OnInit {
   addTemperatureToDB(id: String, shopID: string) {
     const values = {
       Customer_Temperature: this.infoForm.temperature,
-      Customer_WalkInDate: new Date(firebase.firestore.Timestamp.now().seconds*1000).toDateString(),
-      Customer_WalkInTime: new Date(firebase.firestore.Timestamp.now().seconds*1000).toLocaleTimeString(),
+      Customer_WalkInDate: new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString(),
+      Customer_WalkInTime: new Date(firebase.firestore.Timestamp.now().seconds * 1000).toLocaleTimeString(),
     }
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID).where('Shop_ID', '==', shopID)).get().subscribe(resp => {
       resp.forEach(element => {
         if (element.get('Customer_WalkInDate') != null) {
           this.recordID = element.get('Customer_Record_ID');
-        this.afs.collection('CustomerRecord').doc(this.recordID).update(values).then(
-          () => {
-            console.log("Successfully added to Database.")
-          },
-          (error) => alert("An error occurred")
-        ).catch(
-          (error) => alert("Please try again")
-        );
+          this.afs.collection('CustomerRecord').doc(this.recordID).update(values).then(
+            () => {
+              console.log("Successfully added to Database.")
+            },
+            (error) => alert("An error occurred")
+          ).catch(
+            (error) => alert("Please try again")
+          );
         }
-      }) 
+      })
     });
   }
 
