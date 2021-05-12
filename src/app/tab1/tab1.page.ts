@@ -27,7 +27,7 @@ export class Tab1Page {
   public totalPeople: number = 0;
 
   public currentTotalTicket: number = 0;
-
+  public peopleArray: any[] = [];
   public array: any[] = [];
   public arrayLength = 0;
 
@@ -36,7 +36,6 @@ export class Tab1Page {
 
   ngOnInit() {
     this.shopID = this.router.getCurrentNavigation().extras.state.data;
-    console.log(this.shopID);
     this.updateShopImage();
   }
 
@@ -75,54 +74,26 @@ export class Tab1Page {
     });
   }
 
-  // getTotalPeopleInShop(visitingShop: string) { //Get number of people in shop from db
-  //   this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-  //   this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
-  //     this.array.splice(0, this.array.length);
-  //     resp.forEach(resp2 => {
-  //       this.afs.collection('Customer', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID)).get().subscribe(resp3 => {
-  //         resp3.forEach(resp4 => {
-  //           this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe
-  //             (resp5 => {
-  //               console.log("Geolocation Resp 4: " + resp4.get('Geolocation').toString());
-  //               resp5.forEach(resp6 => {
-  //                 console.log("Geolocation Resp 6: " + resp6.get('Shop_Geolocation').toString());
-  //                 if ((resp2.get('Customer_Temperature') != null) && (resp4.get('Geolocation').toString() == resp6.get('Shop_Geolocation').toString())) {
-  //                   if (resp2.data.length != 0) {
-  //                     this.totalPeople = resp2.data.length;
-  //                     this.addTotalNumberInShop(visitingShop, this.totalPeople);
-  //                   }
-  //                 }
-  //               })
-  //             });
-  //         })
-  //       });
-  //     });
-  //   });
-  //   console.log("Array: " + this.array);
-  //   this.arrayLength = this.array.length;
-  //   console.log("Array Length: " + this.arrayLength);
-  // }
-
   getTotalPeopleInShop(visitingShop: string) { //Get number of people in shop from db
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
+    this.peopleArray.splice(0, this.peopleArray.length);
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
-      this.array.splice(0, this.array.length);
       resp.forEach(resp2 => {
-        this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe(resp3 => {
+        this.afs.collection('Customer', ref => ref.where('Customer_ID', '==', resp2.get('Customer_ID'))).get().subscribe(resp3 => {
           resp3.forEach(resp4 => {
-            this.afs.collection('Customer', ref => ref.where('Geolocation', '!=', null)).get().subscribe
+            this.afs.collection('Shop', ref => ref.where('Shop_ID', '==', visitingShop)).get().subscribe
               (resp5 => {
                 resp5.forEach(resp6 => {
-                  console.log("Geolocation Resp 4 Shop: " + resp4.get('Shop_Geolocation').toString());
-                  if ((resp2.get('Customer_Temperature') != null) && (resp6.get('Geolocation') != null)) {
-                    console.log("Geolocation Resp 6 Customer: " + resp6.get('Geolocation').toString());
-                    if ((resp6.get('Geolocation').toString() == resp4.get('Shop_Geolocation').toString())) {
-                      console.log("aaa");
-                      if (resp2.data.length != 0) {
-                        console.log("Resp2 Length: " + resp2.data.length);
-                        this.totalPeople = resp2.data.length;
-                        this.addTotalNumberInShop(visitingShop, this.totalPeople);
+                  console.log("Geolocation Resp 6: " + resp6.get('Shop_Geolocation').toString());
+
+                  if (resp4.get('Geolocation') != null && resp2.get('Shop_ID') == visitingShop) {
+                    console.log("Geolocation Resp 4: " + resp4.get('Geolocation').toString());
+                    for (let i = 0; i < resp6.get('Shop_Geolocation').length; i++) {
+                      if ((resp2.get('Customer_Temperature') != null) && ((resp4.get('Geolocation')[i] >= resp6.get('Shop_Geolocation')[i] - 0.02 && resp4.get('Geolocation')[i] <= resp6.get('Shop_Geolocation')[i] + 0.02) && (resp4.get('Geolocation')[i + 1] >= resp6.get('Shop_Geolocation')[i + 1] - 0.02 && resp4.get('Geolocation')[i + 1] <= resp6.get('Shop_Geolocation')[i + 1] + 0.02))) {
+                        this.peopleArray.push({
+                          resp4
+                        });
+                        this.totalPeople = this.peopleArray.length;
                       }
                     }
                   }
@@ -149,11 +120,9 @@ export class Tab1Page {
         }
       })
     })
-    console.log(this.totalPeople);
   }
 
   getQueueNumber(visitingShop: string) { //Get number of people in queue from db ///ADD CUSTOMER LOCATION HERE
-    console.log("Get Queue")
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
       this.array.splice(0, this.array.length);
@@ -163,7 +132,6 @@ export class Tab1Page {
             element2
           });
           this.arrayLength = this.array.length;
-          console.log("Tab 1 Array Length: " + this.arrayLength);
         }
       })
     })
@@ -205,9 +173,7 @@ export class Tab1Page {
           console.log("before:" + this.currentTotalTicket);
           this.currentTotalTicket == 2;
           console.log("after:" + this.currentTotalTicket);
-        }
-        else {
-          console.log("Ticket Number DB: " + this.ticketNumber);
+        } else {
           this.updateTicketNumber(this.ticketNumber, this.ticketID);
           this.storeTicketNumber(this.ticketNumber);
           this.showTicket(this.ticketNumber);

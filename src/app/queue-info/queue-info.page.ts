@@ -36,6 +36,7 @@ export class QueueInfoPage implements OnInit {
   public arrayLength = 0;
   public latitude = 0;
   public longitude = 0;
+  public peopleArray: any[] = [];
 
   constructor(public router: Router, public alertController: AlertController, public navCtrl: NavController, private qrScanner: QRScanner, public afs: AngularFirestore, public globalVar: GlobalVariable, public toastController: ToastController, private geolocation: Geolocation, private localNotifications: LocalNotifications) {
     this.globalVar = globalVar;
@@ -48,6 +49,16 @@ export class QueueInfoPage implements OnInit {
     this.updateShopImage();
     this.getShopMaxCapacity();
     this.getCurrentTicketNumber();
+  }
+
+  doRefresh(event) { //Refresh page
+    this.getShopMaxCapacity();
+    this.getCurrentTicketNumber();
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 1000);
   }
 
   updateShopImage() {
@@ -98,7 +109,6 @@ export class QueueInfoPage implements OnInit {
           resp3.forEach(resp4 => {
             if (this.ticketShopName == resp4.get('Shop_Name') && resp2.get('Customer_WalkInDate') == this.checkDate) {
               this.ticketNumber = resp2.get('Ticket_Number');
-              this.sendNotification(this.ticketNumber, currentNumber);
             }
           });
         });
@@ -123,22 +133,36 @@ export class QueueInfoPage implements OnInit {
 
   getTotalPeopleInShop() { //Get number of people in shop from db
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
-    this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe(resp2 => {
-      resp2.forEach(element => {
-        this.shopID = element.get('Shop_ID');
-        this.afs.collection('CustomerRecord', ref => ref.where('Shop_ID', '==', this.shopID)).get().subscribe(resp => {
-          resp.forEach(element2 => {
-            if ((element2.get('Customer_WalkInDate') == this.checkDate) && (element2.get('Customer_Temperature') != null)) {
-              if (element2.data.length != 0) {
-                this.totalPeople = element.data.length;
-                this.addTotalNumberInShop(this.shopID, this.totalPeople);
-              }
-            }
-          });
-          this.getQueueNumber(this.shopID);
-        })
-      })
-    })
+    this.peopleArray.splice(0, this.peopleArray.length);
+    this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp => {
+      resp.forEach(resp2 => {
+        this.afs.collection('Customer', ref => ref.where('Customer_ID', '==', resp2.get('Customer_ID'))).get().subscribe(resp3 => {
+          resp3.forEach(resp4 => {
+            this.afs.collection('Shop', ref => ref.where('Shop_Name', '==', this.ticketShopName)).get().subscribe
+              (resp5 => {
+                resp5.forEach(resp6 => {
+                  this.shopID = resp6.get('Shop_ID');
+                  console.log("Geolocation Resp 6: " + resp6.get('Shop_Geolocation').toString());
+
+                  if (resp4.get('Geolocation') != null && resp6.get('Shop_ID') == this.shopID) {
+                    console.log("Geolocation Resp 4: " + resp4.get('Geolocation').toString());
+                    for (let i = 0; i < resp6.get('Shop_Geolocation').length; i++) {
+                      if ((resp2.get('Customer_Temperature') != null) && (resp2.get('Shop_ID') == this.shopID) && ((resp4.get('Geolocation')[i] >= resp6.get('Shop_Geolocation')[i] - 0.02 && resp4.get('Geolocation')[i] <= resp6.get('Shop_Geolocation')[i] + 0.02) && (resp4.get('Geolocation')[i + 1] >= resp6.get('Shop_Geolocation')[i + 1] - 0.02 && resp4.get('Geolocation')[i + 1] <= resp6.get('Shop_Geolocation')[i + 1] + 0.02))) {
+                        this.peopleArray.push({
+                          resp4
+                        });
+                        this.totalPeople = this.peopleArray.length;
+                        this.addTotalNumberInShop(this.shopID, this.totalPeople);
+                      }
+                    }
+                  }
+                  this.getQueueNumber(this.shopID);
+                })
+              });
+          })
+        });
+      });
+    });
   }
 
   addTotalNumberInShop(visitingShop: string, totalPeople: number) {
@@ -153,27 +177,25 @@ export class QueueInfoPage implements OnInit {
         }
       })
     })
-    console.log(this.totalPeople);
   }
 
   getQueueNumber(visitingShop: string) { //Get number of people in queue from db
     this.checkDate = new Date(firebase.firestore.Timestamp.now().seconds * 1000).toDateString();
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_WalkInDate', '==', this.checkDate)).get().subscribe(resp2 => {
+      this.array.splice(0, this.array.length);
       resp2.forEach(element2 => {
         if ((element2.get('Shop_ID') == visitingShop) && (element2.get('Customer_Temperature') == null)) {
           console.log(element2.data.length);
           this.array.push({
             element2
           });
+          this.arrayLength = this.array.length;
         }
       })
     })
-    this.arrayLength = this.array.length;
-    console.log(this.arrayLength);
   }
 
   async throwTicket() {
-    console.log("ticket");
     const alert = await this.alertController.create({
       header: 'Ticket Cancelation',
       message: `Are you sure to cancel your e-ticket?`,
@@ -268,17 +290,20 @@ export class QueueInfoPage implements OnInit {
 
           // start scanning
           let scanSub = this.qrScanner.scan().subscribe(async (text: string) => {
-            alert('Scanned something' + text);
+            alert('Successfully Scanned');
             this.qrScanner.hide(); // hide camera preview
             window.document.querySelector('ion-app').classList.remove('transparentBody');
-            const toast = await this.toastController.create({
-              message: 'You scanned text is this :' + text,
-              duration: 6000
-            });
-            toast.present();
+            // const toast = await this.toastController.create({
+            //   message: 'You scanned text is this :' + text,
+            //   duration: 6000
+            // });
+            // toast.present();
             scanSub.unsubscribe(); // stop scanning
             ionApp.style.display = 'block';
           });
+
+          this.getLocation();
+
         } else if (status.denied) {
           // camera permission was permanently denied
           // you must use QRScanner.openSettings() method to guide the user to the settings page
@@ -288,17 +313,15 @@ export class QueueInfoPage implements OnInit {
         }
       })
       .catch((e: any) => alert('Error is' + e));
-
-    this.getLocation();
   }
 
   getLocation() {
     this.geolocation.getCurrentPosition().then((resp) => {
       alert('Latitude: ' + resp.coords.latitude + ' Longitude: ' + resp.coords.longitude);
-      this.latitude = resp.coords.latitude;
-      this.longitude = resp.coords.longitude;
+      this.globalVar.latitude = this.latitude = resp.coords.latitude;
+      this.globalVar.longitude = this.longitude = resp.coords.longitude;
       const value = {
-        Geolocation: [this.latitude, this.longitude]
+        Geolocation: [resp.coords.latitude, resp.coords.longitude]
       }
       this.afs.collection('Customer').doc(this.globalVar.authUserID).update(value).then(
         () => {
@@ -319,10 +342,12 @@ export class QueueInfoPage implements OnInit {
       // data.coords.longitude
       if ((data as Geoposition).coords != undefined) {
         var geoposition = (data as Geoposition);
+        this.globalVar.latitude = geoposition.coords.latitude;
+        this.globalVar.longitude = geoposition.coords.longitude;
         console.log('Latitude: ' + geoposition.coords.latitude + ' Longitude: ' + geoposition.coords.longitude)
         const value = {
           Geolocation: [geoposition.coords.latitude, geoposition.coords.longitude]
-        } ///UNCOMMENT!!!
+        }
         this.afs.collection('Customer').doc(this.globalVar.authUserID).update(value).then(
           () => {
             console.log("Successfully added to Database.")

@@ -22,7 +22,8 @@
 
 <ion-content>
   <ion-list>
-    <ion-list-header>Today</ion-list-header>
+    <!-- <ion-list-header>Today</ion-list-header> -->
+    <div *ngFor="let notify of notificationArray">
     <ion-item>
       <ion-grid>
         <ion-row class="ion-align-items-center">
@@ -32,13 +33,15 @@
             </ion-avatar>
           </ion-col>
           <ion-col>
-            <ion-note class="ion-text-end">3:43 pm</ion-note>
-            <p class="title">It's Your Turn!</p>
+            <ion-note class="ion-text-end">{{ notify.Time }}</ion-note>
+            <p class="title">It's Your Turn at {{ notify.Shop }}</p>
             <p class="message">Please proceed to the counter.</p>
+            <p class="date">{{ notify.Date }}</p>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ion-item>
+  </div>
   </ion-list>
 
 </ion-content>

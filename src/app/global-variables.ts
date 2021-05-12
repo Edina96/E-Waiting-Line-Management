@@ -7,4 +7,7 @@ export class GlobalVariable {
     ticketInfoArray: any[] = [];
     ticketShopName: string = '';
     notificationArray: any[] = [];
+    latitude: number = 0;
+    longitude: number = 0;
+    notify: string = '';
 }

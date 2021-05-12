@@ -28,21 +28,23 @@
   </ion-refresher>
 
   <div *ngFor="let ticket of ticketInfoArray">
-  <ion-card class="ion-margin" [routerLink]="['/queue-info']" routerLinkActive="router-link-active" [state]="{id: ticketShopName, data: ticket.shopName }">
-    <ion-grid>
-      <ion-row class="ion-align-items-center">
-        <ion-col>
-          <img src="{{ ticket.shopImage }}" alt="shopLogo" class="shopImg">
-        </ion-col>
-        <ion-col>
-          <p class="ticket">{{ ticket.ticketNumber }}</p>
-          <p class="current">Current: {{ticket.current}}</p>
-          <ion-icon name="qr-code" style="zoom:1.5"></ion-icon>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
-</div>
+    <ion-card class="ion-margin" [routerLink]="['/queue-info']" routerLinkActive="router-link-active"
+      [state]="{id: ticketShopName, data: ticket.shopName }">
+      <ion-grid>
+        <ion-row class="ion-align-items-center">
+          <ion-col>
+            <img src="{{ ticket.shopImage }}" alt="shopLogo" class="shopImg">
+          </ion-col>
+          <ion-col>
+            <p class="ticket">{{ ticket.ticketNumber }}</p>
+            <p class="current">Current: {{ ticket.current }}</p>
+            <ion-icon name="qr-code" style="zoom:1.5"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </div>
 
-  <ion-button color="medium" class="ion-margin-top btn"  expand="block" (click)="add()">Get Another Ticket</ion-button>
+  <ion-button color="medium" class="ion-margin-top btn" expand="block" (click)="add()">Get Another Ticket</ion-button>
+
 </ion-content>
