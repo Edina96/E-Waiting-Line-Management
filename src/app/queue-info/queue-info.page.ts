@@ -143,7 +143,7 @@ export class QueueInfoPage implements OnInit {
                 resp5.forEach(resp6 => {
                   this.shopID = resp6.get('Shop_ID');
                   console.log("Geolocation Resp 6: " + resp6.get('Shop_Geolocation').toString());
-
+                  
                   if (resp4.get('Geolocation') != null && resp6.get('Shop_ID') == this.shopID) {
                     console.log("Geolocation Resp 4: " + resp4.get('Geolocation').toString());
                     for (let i = 0; i < resp6.get('Shop_Geolocation').length; i++) {

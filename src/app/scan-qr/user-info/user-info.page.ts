@@ -32,9 +32,17 @@ export class UserInfoPage implements OnInit {
   ngOnInit() {
   }
 
-  savedFavourite() {
+  async savedFavourite() {
     if (this.infoForm.temperature == null) {
       this.presentAlertPrompt();
+    } else if (this.infoForm.temperature === "37.8" || this.infoForm.temperature > "37.8") {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        subHeader: 'Your Body Temperature is too HIGH. Please contact shop assistants for further assistance.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      this.navCtrl.navigateBack('/tabs/tab1');
     } else {
       // this.addTemperatureToDB(this.globalVar.authUserID);
       this.getShopID();
@@ -42,13 +50,50 @@ export class UserInfoPage implements OnInit {
     }
   }
 
-  addDependent() {
+  async addDependent() {
     if (this.infoForm.temperature == null) {
       this.presentAlertPrompt();
+    } else if (this.infoForm.temperature === "37.8" || this.infoForm.temperature > "37.8") {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        subHeader: 'Your Body Temperature is too HIGH. Please contact shop assistants for further assistance.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      this.navCtrl.navigateBack('/tabs/tab1');
     } else {
-      // this.addTemperatureToDB(this.globalVar.authUserID);
       this.getShopID();
       this.navCtrl.navigateForward('add-dependent');
+    }
+  }
+
+  async infoSubmitted() {
+    if (this.infoForm.temperature == null) {
+      this.presentAlertPrompt();
+    } else if (this.infoForm.temperature === "37.8" || this.infoForm.temperature > "37.8") {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        subHeader: 'Your Body Temperature is too HIGH. Please contact shop assistants for further assistance.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      this.navCtrl.navigateBack('/tabs/tab1');
+    } else {
+      this.getShopID();
+      const alert = await this.alertController.create({
+        header: 'Success',
+        subHeader: 'You have successfully check-in.',
+        message: `Please take note that the app has recorded your geolocation details for the purpose of automating check-out.`,
+        buttons: [
+          {
+            text: 'OK',
+            handler: () => {
+              this.navCtrl.navigateForward('queue-info');
+            }
+          }
+        ]
+      });
+      await alert.present();
     }
   }
 
@@ -87,12 +132,6 @@ export class UserInfoPage implements OnInit {
         }
       }) 
     });
-  }
-
-  checkTemperature() {
-    if (this.infoForm.temperature == null) {
-      this.presentAlertPrompt();
-    }
   }
 
   async presentAlertPrompt() { //Alert box for missing temperature
