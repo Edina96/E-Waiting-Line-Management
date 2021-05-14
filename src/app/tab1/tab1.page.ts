@@ -94,6 +94,7 @@ export class Tab1Page {
                           resp4
                         });
                         this.totalPeople = this.peopleArray.length;
+                        this.addTotalNumberInShop(visitingShop, this.totalPeople);
                       }
                     }
                   }
