@@ -114,7 +114,7 @@ export class UserInfoPage implements OnInit {
   addTemperatureToDB(id: String, shopID: string) {
     const values = {
       Customer_Temperature: this.infoForm.temperature,
-      Customer_WalkInDate: new Date(firebase.firestore.Timestamp.now().seconds*1000).toDateString(),
+      // Customer_WalkInDate: new Date(firebase.firestore.Timestamp.now().seconds*1000).toDateString(),
       Customer_WalkInTime: new Date(firebase.firestore.Timestamp.now().seconds*1000).toLocaleTimeString(),
     }
     this.afs.collection('CustomerRecord', ref => ref.where('Customer_ID', '==', this.globalVar.authUserID).where('Shop_ID', '==', shopID)).get().subscribe(resp => {
